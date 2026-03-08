@@ -1,0 +1,1200 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zippyra — Flows 1–5: Init · Onboarding · Auth · Permissions · Store</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --z-blue:#1A5EAB;--z-blue-dk:#0E3D7A;--z-blue-lt:#E8F1FB;
+  --z-orange:#F7941D;--z-orange-lt:#FFF3E0;
+  --z-green:#00C47A;--z-red:#FF3B3B;--z-yellow:#FFB800;
+  --z-bg:#F4F5FA;--z-card:#FFFFFF;--z-border:#ECEDF2;
+  --z-text:#0D0D1A;--z-sub:#6B6B8A;--z-muted:#B0B0C8;
+  --ff:'Plus Jakarta Sans',sans-serif;
+}
+body{background:#12121F;font-family:var(--ff);padding:32px 20px;display:flex;flex-direction:column;align-items:center;}
+h2.section-title{color:#fff;font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin:32px 0 20px;opacity:.5;width:100%;max-width:1700px;}
+.grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:flex-start;max-width:1700px;width:100%;}
+.frame{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.label{color:#555;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+
+/* Phone Shell */
+.phone{width:300px;height:648px;background:var(--z-bg);border-radius:46px;border:7px solid #222240;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.03);}
+.notch{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:88px;height:22px;background:#000;border-radius:11px;z-index:100;}
+.sbar{height:38px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 6px;flex-shrink:0;position:relative;z-index:10;}
+.sbar .t{font-size:11px;font-weight:800;color:var(--z-text);}
+.sbar .i{font-size:9px;color:var(--z-sub);display:flex;gap:4px;align-items:center;}
+.sbar.wh .t{color:#fff;} .sbar.wh .i{color:rgba(255,255,255,.6);}
+.scr{flex:1;overflow:hidden;position:relative;}
+.scr.scroll{overflow-y:auto;scrollbar-width:none;}
+.scr.scroll::-webkit-scrollbar{display:none;}
+
+/* ─ SHARED ─ */
+.btn{border:none;border-radius:14px;font-family:var(--ff);font-weight:800;cursor:pointer;padding:13px 20px;font-size:13px;width:100%;}
+.btn-primary{background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));color:#fff;box-shadow:0 6px 20px rgba(26,94,171,.35);}
+.btn-ghost{background:var(--z-blue-lt);color:var(--z-blue);}
+.btn-orange{background:linear-gradient(135deg,var(--z-orange),#D97B0A);color:#fff;box-shadow:0 6px 20px rgba(247,148,29,.35);}
+.btn-green{background:linear-gradient(135deg,var(--z-green),#00A060);color:#fff;box-shadow:0 6px 20px rgba(0,196,122,.35);}
+.btn-red{background:linear-gradient(135deg,var(--z-red),#CC2222);color:#fff;}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:20px;font-size:9px;font-weight:800;}
+.chip-g{background:#E6FFF4;color:var(--z-green);}
+.chip-o{background:var(--z-orange-lt);color:var(--z-orange);}
+.chip-b{background:var(--z-blue-lt);color:var(--z-blue);}
+.chip-r{background:#FFF0F0;color:var(--z-red);}
+.chip-y{background:#FFF8E6;color:var(--z-yellow);}
+.bnav{height:58px;background:#fff;border-top:1px solid var(--z-border);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding:0 4px 6px;}
+.bni{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;cursor:pointer;padding:4px 0;}
+.bni .ico{font-size:19px;line-height:1;}
+.bni .lbl{font-size:8px;font-weight:700;color:var(--z-muted);}
+.bni.act .lbl{color:var(--z-blue);}
+.bnav-scan{width:42px;height:42px;background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(26,94,171,.4);position:relative;top:-8px;}
+.inner-hdr{background:#fff;padding:10px 16px;border-bottom:1px solid var(--z-border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.back{width:30px;height:30px;border-radius:10px;background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.pg-title{font-size:14px;font-weight:800;color:var(--z-text);}
+.inp{background:var(--z-bg);border:1.5px solid var(--z-border);border-radius:12px;padding:11px 14px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--z-text);}
+.inp.focus{border-color:var(--z-blue);}
+.inp.err{border-color:var(--z-red);}
+.err-msg{color:var(--z-red);font-size:10px;font-weight:600;margin-top:4px;display:flex;align-items:center;gap:4px;}
+
+/* ═══════════════ SCREEN STYLES ═══════════════ */
+
+/* --- 1a. SPLASH --- */
+.s-splash{background:linear-gradient(160deg,#051b3a 0%,#0E3D7A 40%,#1A5EAB 75%,#2272c8 100%);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.splash-ring{position:absolute;border-radius:50%;border:1px solid rgba(255,255,255,.06);}
+.logo3d{width:88px;height:88px;position:relative;margin-bottom:20px;}
+.logo-bag{width:88px;height:88px;background:linear-gradient(145deg,#3B8BE0,#1A5EAB,#0C2F6A);border-radius:22px;display:flex;align-items:center;justify-content:center;box-shadow:0 20px 40px rgba(0,0,0,.4),0 0 0 1px rgba(255,255,255,.15),inset 0 1px 0 rgba(255,255,255,.2);position:relative;overflow:hidden;}
+.logo-bag::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,rgba(255,255,255,.15) 0%,transparent 60%);}
+.bag-handle{position:absolute;top:-12px;left:50%;transform:translateX(-50%);width:32px;height:18px;border:3px solid rgba(255,255,255,.7);border-bottom:none;border-radius:10px 10px 0 0;}
+.bolt-3d{font-size:38px;filter:drop-shadow(0 4px 12px rgba(0,0,0,.4));z-index:1;position:relative;}
+.brand-name{font-size:32px;font-weight:900;color:#fff;letter-spacing:-1px;line-height:1;}
+.brand-name span{color:var(--z-orange);}
+.brand-tag{font-size:11px;color:rgba(255,255,255,.5);margin-top:6px;font-weight:600;letter-spacing:.5px;}
+.splash-loader{width:48px;height:3px;background:rgba(255,255,255,.15);border-radius:2px;margin-top:40px;overflow:hidden;}
+.splash-loader-fill{height:100%;width:60%;background:linear-gradient(90deg,transparent,#fff,transparent);border-radius:2px;animation:loaderAnim 1.5s ease-in-out infinite;}
+@keyframes loaderAnim{0%{transform:translateX(-100%)}100%{transform:translateX(250%)}}
+.india-badge{margin-top:16px;background:rgba(255,255,255,.1);border-radius:20px;padding:6px 14px;backdrop-filter:blur(10px);}
+.india-badge span{font-size:10px;color:rgba(255,255,255,.7);font-weight:700;}
+
+/* --- 1b. VERSION CHECK --- */
+.s-version{background:#fff;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;}
+
+/* --- 1c. MANDATORY UPDATE --- */
+.s-update{background:linear-gradient(180deg,var(--z-blue-lt) 0%,#fff 40%);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:14px;text-align:center;}
+
+/* --- Onboarding --- */
+.s-ob{background:#fff;height:100%;display:flex;flex-direction:column;}
+.ob-art{height:250px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;flex-shrink:0;}
+.ob-body{flex:1;padding:20px;display:flex;flex-direction:column;overflow:hidden;}
+.ob-dots{display:flex;gap:5px;margin-bottom:16px;}
+.ob-dot{height:4px;border-radius:2px;background:var(--z-border);transition:all .3s;}
+.ob-dot.a{width:20px;background:var(--z-blue);}
+.ob-dot.n{width:6px;}
+.ob-head{font-size:19px;font-weight:900;color:var(--z-text);line-height:1.25;margin-bottom:8px;}
+.ob-sub{font-size:11px;color:var(--z-sub);line-height:1.65;flex:1;}
+.ob-skip{font-size:10px;color:var(--z-muted);font-weight:700;text-align:center;margin-bottom:8px;}
+
+/* 3D Illustration art areas */
+.art-scan{background:linear-gradient(160deg,#EBF4FF,#F0FAFF);}
+.art-pay{background:linear-gradient(160deg,#FFF8F0,#FFF5E0);}
+.art-exit{background:linear-gradient(160deg,#F0FFF8,#E8FFEF);}
+.art-intro{background:linear-gradient(160deg,#F5F0FF,#EEF4FF);}
+.illus{font-size:96px;filter:drop-shadow(0 16px 32px rgba(0,0,0,.15));animation:floatY 3s ease-in-out infinite;}
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-10px)}}
+.illus-ring{position:absolute;border-radius:50%;border:2px solid;opacity:.12;animation:spinRing 8s linear infinite;}
+.illus-ring2{animation-direction:reverse;animation-duration:12s;}
+@keyframes spinRing{from{transform:rotate(0)}to{transform:rotate(360deg)}}
+
+/* --- AUTH screens --- */
+.s-auth{background:#fff;height:100%;display:flex;flex-direction:column;padding:24px 20px;}
+.auth-logo{display:flex;align-items:center;gap:8px;margin-bottom:20px;}
+.auth-logo .ln{font-size:18px;font-weight:900;color:var(--z-blue);}
+.auth-logo .ln span{color:var(--z-orange);}
+.auth-head{font-size:20px;font-weight:900;color:var(--z-text);line-height:1.2;margin-bottom:6px;}
+.auth-sub{font-size:11px;color:var(--z-sub);margin-bottom:20px;line-height:1.5;}
+.flag-row{display:flex;align-items:center;gap:6px;background:var(--z-bg);border:1.5px solid var(--z-border);border-radius:12px;padding:11px 14px;}
+.flag-row.focus{border-color:var(--z-blue);}
+.otp-grid{display:flex;gap:8px;justify-content:center;margin:16px 0;}
+.otp-box{width:46px;height:50px;border-radius:12px;border:2px solid var(--z-blue);background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--z-blue);}
+.otp-box.empty{border-color:var(--z-border);background:var(--z-bg);}
+.otp-box.err{border-color:var(--z-red);background:#FFF0F0;}
+.resend-row{text-align:center;margin-bottom:16px;}
+.resend-row span{font-size:10px;color:var(--z-sub);}
+.resend-row b{color:var(--z-blue);}
+.divider{display:flex;align-items:center;gap:8px;margin:12px 0;}
+.divider hr{flex:1;border:none;border-top:1px solid var(--z-border);}
+.divider span{font-size:10px;color:var(--z-muted);font-weight:600;}
+.social-row{display:flex;gap:8px;}
+.soc-btn{flex:1;border:1.5px solid var(--z-border);border-radius:11px;padding:9px;display:flex;align-items:center;justify-content:center;gap:5px;background:#fff;cursor:pointer;}
+.soc-btn span{font-size:10px;font-weight:700;color:var(--z-text);}
+.lock-screen{background:linear-gradient(160deg,#FFF0F0,#fff);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:14px;}
+
+/* --- PERMISSIONS --- */
+.s-perm{background:#fff;height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:16px;}
+.perm-icon{width:80px;height:80px;border-radius:24px;display:flex;align-items:center;justify-content:center;font-size:36px;margin:0 auto;}
+.perm-title{font-size:17px;font-weight:900;color:var(--z-text);}
+.perm-desc{font-size:11px;color:var(--z-sub);line-height:1.65;}
+.perm-denied{background:#FFF0F0;border-radius:12px;padding:10px 14px;display:flex;align-items:center;gap:8px;text-align:left;}
+.perm-denied span{font-size:10px;color:var(--z-red);font-weight:600;}
+
+/* --- STORE DETECTION --- */
+.s-store{background:var(--z-bg);height:100%;display:flex;flex-direction:column;}
+.detecting-area{background:#fff;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;}
+.pulse-ring{width:100px;height:100px;border-radius:50%;border:2px solid var(--z-blue);opacity:.5;animation:pulseRing 2s ease-out infinite;}
+.pulse-ring2{animation-delay:.6s;}
+.pulse-ring3{animation-delay:1.2s;}
+@keyframes pulseRing{0%{transform:scale(.5);opacity:.8}100%{transform:scale(2);opacity:0}}
+.pulse-center{width:56px;height:56px;border-radius:50%;background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:26px;position:absolute;}
+.store-card{background:#fff;border-radius:16px;border:1px solid var(--z-border);padding:14px;display:flex;gap:12px;align-items:center;}
+.store-thumb{width:48px;height:48px;border-radius:14px;background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:22px;}
+.store-name{font-size:13px;font-weight:800;color:var(--z-text);}
+.store-dist{font-size:10px;color:var(--z-sub);}
+.store-sla{font-size:10px;font-weight:700;color:var(--z-green);}
+
+/* Syncing state */
+.sync-progress{width:100%;height:5px;background:var(--z-border);border-radius:3px;overflow:hidden;margin:8px 0;}
+.sync-fill{height:100%;background:linear-gradient(90deg,var(--z-blue),var(--z-orange));border-radius:3px;animation:syncAnim 2s ease-in-out infinite;}
+@keyframes syncAnim{0%{width:0%}60%{width:80%}100%{width:95%}}
+
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     SECTION 1 — APP INITIALIZATION
+═══════════════════════════════════ -->
+<h2 class="section-title">① App Initialization</h2>
+<div class="grid">
+
+<!-- 1.1 Splash -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar wh" style="background:transparent;position:absolute;top:0;width:100%;z-index:10;padding-top:8px;padding-left:22px;padding-right:22px;display:flex;justify-content:space-between;">
+      <span class="t">9:41</span><span class="i" style="color:rgba(255,255,255,.5)">●●● ■</span>
+    </div>
+    <div class="scr">
+      <div class="s-splash">
+        <div class="splash-ring" style="width:340px;height:340px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+        <div class="splash-ring" style="width:240px;height:240px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+        <div class="splash-ring" style="width:160px;height:160px;top:50%;left:50%;transform:translate(-50%,-50%);"></div>
+        <div class="logo3d">
+          <div class="logo-bag">
+            <div class="bag-handle"></div>
+            <span class="bolt-3d">⚡</span>
+          </div>
+        </div>
+        <div class="brand-name">Zippy<span>ra</span></div>
+        <div class="brand-tag">Scan · Pay · Exit · Done</div>
+        <div class="india-badge"><span>🇮🇳 India's Smart Retail Platform</span></div>
+        <div class="splash-loader"><div class="splash-loader-fill"></div></div>
+        <div style="color:rgba(255,255,255,.25);font-size:9px;font-weight:600;margin-top:8px;">v2.4.1</div>
+      </div>
+    </div>
+  </div>
+  <div class="label">1.1 Splash Screen</div>
+</div>
+
+<!-- 1.2 App Version Check -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-version">
+        <div style="width:70px;height:70px;border-radius:20px;background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:32px;box-shadow:0 8px 24px rgba(26,94,171,.2);">🔄</div>
+        <div style="font-size:16px;font-weight:900;color:var(--z-text);">Checking Version</div>
+        <div style="font-size:11px;color:var(--z-sub);text-align:center;line-height:1.6;">Verifying app integrity &amp; security signature…</div>
+        <div class="sync-progress" style="width:180px;"></div>
+        <div style="font-size:10px;color:var(--z-muted);">Current: v2.4.1 · Checking…</div>
+      </div>
+    </div>
+  </div>
+  <div class="label">1.2 Version Check</div>
+</div>
+
+<!-- 1.3 Mandatory Update -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-update">
+        <div style="font-size:72px;filter:drop-shadow(0 8px 20px rgba(26,94,171,.2));animation:floatY 3s ease-in-out infinite;">🚀</div>
+        <div class="chip chip-o">Update Required</div>
+        <div style="font-size:18px;font-weight:900;color:var(--z-text);">New Version Available</div>
+        <div style="font-size:11px;color:var(--z-sub);line-height:1.6;">v2.5.0 brings faster scanning, smarter exit validation &amp; security fixes. Please update to continue.</div>
+        <div style="background:var(--z-bg);border-radius:14px;padding:12px 16px;width:100%;text-align:left;">
+          <div style="font-size:10px;font-weight:800;color:var(--z-text);margin-bottom:6px;">What's New ✨</div>
+          <div style="font-size:10px;color:var(--z-sub);line-height:1.7;">• 40% faster barcode scanning<br>• AI-powered exit validation<br>• WhatsApp receipt improvements<br>• Bug fixes &amp; security patches</div>
+        </div>
+        <button class="btn btn-primary">Update Now · v2.5.0</button>
+        <div style="font-size:9px;color:var(--z-muted);">This update is mandatory to continue using Zippyra</div>
+      </div>
+    </div>
+  </div>
+  <div class="label">1.3 Mandatory Update</div>
+</div>
+
+</div><!-- end grid -->
+
+<!-- ═══════════════════════════════════
+     SECTION 2 — ONBOARDING
+═══════════════════════════════════ -->
+<h2 class="section-title">② Onboarding Flow</h2>
+<div class="grid">
+
+<!-- 2.1 Introduction -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-ob">
+        <div class="ob-art art-intro" style="height:250px;">
+          <div class="illus-ring" style="width:180px;height:180px;border-color:var(--z-blue)"></div>
+          <div class="illus-ring illus-ring2" style="width:130px;height:130px;border-color:var(--z-orange)"></div>
+          <span class="illus" style="font-size:90px;">🛍️</span>
+        </div>
+        <div class="ob-body">
+          <div class="ob-dots"><div class="ob-dot a"></div><div class="ob-dot n"></div><div class="ob-dot n"></div><div class="ob-dot n"></div></div>
+          <div class="ob-head">Welcome to Zippyra</div>
+          <div class="ob-sub">The smartest way to shop in physical stores. Your phone is your checkout counter — no queues, no waiting.</div>
+          <div style="height:8px;"></div>
+          <div class="ob-skip">Skip all →</div>
+          <button class="btn btn-primary">Get Started →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">2.1 Intro</div>
+</div>
+
+<!-- 2.2 Scan Demo -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-ob">
+        <div class="ob-art art-scan">
+          <div class="illus-ring" style="width:180px;height:180px;border-color:var(--z-blue)"></div>
+          <span class="illus" style="font-size:86px;">📱</span>
+          <div style="position:absolute;bottom:12px;left:50%;transform:translateX(-50%);background:rgba(26,94,171,.9);border-radius:10px;padding:5px 12px;white-space:nowrap;">
+            <span style="font-size:10px;color:#fff;font-weight:700;">⚡ Item added to cart!</span>
+          </div>
+        </div>
+        <div class="ob-body">
+          <div class="ob-dots"><div class="ob-dot n"></div><div class="ob-dot a"></div><div class="ob-dot n"></div><div class="ob-dot n"></div></div>
+          <div class="ob-head">Scan as You Shop</div>
+          <div class="ob-sub">Point your camera at any product barcode. Items are instantly added to your digital cart — no cashier needed.</div>
+          <div style="background:var(--z-blue-lt);border-radius:12px;padding:10px;margin:10px 0;display:flex;gap:8px;align-items:center;">
+            <span style="font-size:20px;">⚡</span>
+            <span style="font-size:10px;font-weight:700;color:var(--z-blue);">Works on any Android &amp; iPhone camera</span>
+          </div>
+          <button class="btn btn-primary">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">2.2 Scan Demo</div>
+</div>
+
+<!-- 2.3 Pay Demo -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-ob">
+        <div class="ob-art art-pay">
+          <div class="illus-ring" style="width:180px;height:180px;border-color:var(--z-orange)"></div>
+          <span class="illus" style="font-size:86px;">💳</span>
+        </div>
+        <div class="ob-body">
+          <div class="ob-dots"><div class="ob-dot n"></div><div class="ob-dot n"></div><div class="ob-dot a"></div><div class="ob-dot n"></div></div>
+          <div class="ob-head">Pay in One Tap</div>
+          <div class="ob-sub">UPI, cards, wallets, EMI — all supported. Auto-routed for the fastest success rate. Your GST invoice lands on WhatsApp instantly.</div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:6px;margin:8px 0;">
+            <div style="background:#E8F5FF;border-radius:10px;padding:8px;text-align:center;font-size:9px;font-weight:700;color:var(--z-blue);">📱 UPI</div>
+            <div style="background:#FFF8E6;border-radius:10px;padding:8px;text-align:center;font-size:9px;font-weight:700;color:var(--z-yellow);">💳 Cards</div>
+            <div style="background:#F0FFF8;border-radius:10px;padding:8px;text-align:center;font-size:9px;font-weight:700;color:var(--z-green);">🪙 Wallets</div>
+            <div style="background:#FFF0F8;border-radius:10px;padding:8px;text-align:center;font-size:9px;font-weight:700;color:#C050A0;">📊 EMI</div>
+          </div>
+          <button class="btn btn-orange">Next →</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">2.3 Pay Demo</div>
+</div>
+
+<!-- 2.4 Exit Security Demo -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-ob">
+        <div class="ob-art art-exit">
+          <div class="illus-ring" style="width:180px;height:180px;border-color:var(--z-green)"></div>
+          <span class="illus" style="font-size:86px;">🚪</span>
+          <div style="position:absolute;top:16px;right:16px;background:var(--z-green);border-radius:10px;padding:4px 8px;">
+            <span style="font-size:9px;color:#fff;font-weight:800;">✓ VALIDATED</span>
+          </div>
+        </div>
+        <div class="ob-body">
+          <div class="ob-dots"><div class="ob-dot n"></div><div class="ob-dot n"></div><div class="ob-dot n"></div><div class="ob-dot a"></div></div>
+          <div class="ob-head">Smart Exit in 3 Secs</div>
+          <div class="ob-sub">Show your QR at the exit gate. Computer vision + RFID validates everything automatically. Gate opens. You're free.</div>
+          <div style="background:#E6FFF4;border-radius:12px;padding:10px;margin:8px 0;display:flex;gap:8px;">
+            <span style="font-size:18px;">🔒</span>
+            <span style="font-size:10px;font-weight:700;color:var(--z-green);">7-layer anti-theft protection. Zero false alarms.</span>
+          </div>
+          <button class="btn btn-green">Let's Shop! 🛍️</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">2.4 Exit Demo</div>
+</div>
+
+<!-- 2.5 Skip Confirmation -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr" style="position:relative;">
+      <div class="s-ob" style="opacity:.4;filter:blur(1px);">
+        <div class="ob-art art-intro"><span class="illus" style="font-size:86px;">🛍️</span></div>
+        <div class="ob-body"><div class="ob-head">Welcome to Zippyra</div></div>
+      </div>
+      <!-- Bottom sheet modal -->
+      <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:22px 22px 0 0;padding:20px;box-shadow:0 -8px 40px rgba(0,0,0,.15);">
+        <div style="width:36px;height:4px;border-radius:2px;background:var(--z-border);margin:0 auto 16px;"></div>
+        <div style="font-size:15px;font-weight:900;color:var(--z-text);margin-bottom:6px;">Skip Onboarding?</div>
+        <div style="font-size:11px;color:var(--z-sub);margin-bottom:16px;line-height:1.6;">You can always revisit the tutorial in Settings → Help Center.</div>
+        <button class="btn btn-ghost" style="margin-bottom:8px;">Skip &amp; Sign In</button>
+        <button class="btn btn-primary">Continue Tour →</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">2.5 Skip Confirm</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 3 — AUTHENTICATION
+═══════════════════════════════════ -->
+<h2 class="section-title">③ Authentication Flow</h2>
+<div class="grid">
+
+<!-- 3.1 Enter Mobile -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="auth-logo"><span style="font-size:22px">⚡</span><div class="ln">Zippy<span>ra</span></div></div>
+        <div class="auth-head">Welcome back 👋</div>
+        <div class="auth-sub">Enter your mobile number to scan, pay &amp; exit smarter</div>
+        <div style="font-size:10px;font-weight:700;color:var(--z-sub);margin-bottom:5px;">MOBILE NUMBER</div>
+        <div class="flag-row focus" style="margin-bottom:14px;">
+          <span style="font-size:18px;">🇮🇳</span>
+          <span style="font-size:13px;font-weight:800;color:var(--z-text);border-right:1px solid var(--z-border);padding-right:8px;margin-right:4px;">+91</span>
+          <span style="font-size:13px;font-weight:600;color:var(--z-text);">98765 43210</span>
+          <span style="width:2px;height:16px;background:var(--z-blue);margin-left:1px;animation:blink .8s infinite;"></span>
+        </div>
+        <style>@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}</style>
+        <button class="btn btn-primary" style="margin-bottom:14px;">Send OTP →</button>
+        <div class="divider"><hr><span>or</span><hr></div>
+        <div class="social-row" style="margin-bottom:14px;">
+          <div class="soc-btn"><span>🌐</span><span>Google</span></div>
+          <div class="soc-btn"><span style="color:#25D366">💬</span><span>WhatsApp</span></div>
+        </div>
+        <div style="flex:1;"></div>
+        <div style="background:var(--z-blue-lt);border-radius:12px;padding:10px 12px;display:flex;gap:8px;align-items:center;">
+          <span style="font-size:16px;">🔒</span>
+          <span style="font-size:9px;color:var(--z-blue);font-weight:600;">AES-256 · PCI-DSS · Your data is never sold</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.1 Enter Mobile</div>
+</div>
+
+<!-- 3.2 Invalid Mobile -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="auth-logo"><span style="font-size:22px">⚡</span><div class="ln">Zippy<span>ra</span></div></div>
+        <div class="auth-head">Welcome back 👋</div>
+        <div class="auth-sub">Enter your mobile number to continue</div>
+        <div style="font-size:10px;font-weight:700;color:var(--z-red);margin-bottom:5px;">MOBILE NUMBER</div>
+        <div class="flag-row" style="border-color:var(--z-red);background:#FFF8F8;margin-bottom:6px;">
+          <span style="font-size:18px;">🇮🇳</span>
+          <span style="font-size:13px;font-weight:800;color:var(--z-text);border-right:1px solid #FFD0D0;padding-right:8px;margin-right:4px;">+91</span>
+          <span style="font-size:13px;font-weight:600;color:var(--z-red);">123</span>
+        </div>
+        <div class="err-msg"><span>⚠️</span><span>Please enter a valid 10-digit mobile number</span></div>
+        <div style="height:14px;"></div>
+        <button class="btn btn-primary" style="opacity:.6;cursor:not-allowed;">Send OTP →</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.2 Invalid Mobile</div>
+</div>
+
+<!-- 3.3 OTP Sent -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="back" style="margin-bottom:20px;">←</div>
+        <div style="width:60px;height:60px;border-radius:18px;background:#E6FFF4;display:flex;align-items:center;justify-content:center;font-size:28px;margin-bottom:14px;box-shadow:0 6px 20px rgba(0,196,122,.2);">📨</div>
+        <div class="auth-head">OTP Sent! 📲</div>
+        <div class="auth-sub">6-digit code sent to +91 98765 43210 via SMS &amp; WhatsApp</div>
+        <div class="otp-grid">
+          <div class="otp-box empty"></div><div class="otp-box empty"></div>
+          <div class="otp-box empty"></div><div class="otp-box empty"></div>
+          <div class="otp-box empty"></div><div class="otp-box empty"></div>
+        </div>
+        <div class="resend-row"><span>Resend OTP in <b>28s</b></span></div>
+        <button class="btn btn-primary" style="opacity:.5;cursor:not-allowed;">Verify OTP</button>
+        <div style="margin-top:10px;background:#E6FFF4;border-radius:10px;padding:8px 12px;display:flex;gap:6px;align-items:center;">
+          <span style="font-size:14px;">💬</span>
+          <span style="font-size:9px;color:var(--z-green);font-weight:700;">OTP also sent on WhatsApp for quick access</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.3 OTP Sent</div>
+</div>
+
+<!-- 3.4 OTP Auto-Read -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth" style="align-items:center;justify-content:center;text-align:center;">
+        <div style="width:72px;height:72px;border-radius:50%;background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:32px;margin-bottom:16px;position:relative;">
+          📩
+          <div style="position:absolute;inset:-4px;border-radius:50%;border:3px solid var(--z-blue);border-top-color:transparent;animation:spin .8s linear infinite;"></div>
+          <style>@keyframes spin{to{transform:rotate(360deg)}}</style>
+        </div>
+        <div style="font-size:15px;font-weight:900;color:var(--z-text);margin-bottom:6px;">Reading OTP…</div>
+        <div style="font-size:10px;color:var(--z-sub);line-height:1.6;margin-bottom:16px;">Automatically reading OTP from your SMS. No need to type.</div>
+        <div class="otp-grid">
+          <div class="otp-box" style="animation:fadeIn .3s .0s both;">4</div>
+          <div class="otp-box" style="animation:fadeIn .3s .15s both;">2</div>
+          <div class="otp-box" style="animation:fadeIn .3s .3s both;">8</div>
+          <div class="otp-box empty" style="border-style:dashed;"></div>
+          <div class="otp-box empty" style="border-style:dashed;"></div>
+          <div class="otp-box empty" style="border-style:dashed;"></div>
+        </div>
+        <style>@keyframes fadeIn{from{opacity:0;transform:scale(.7)}to{opacity:1;transform:scale(1)}}</style>
+        <div style="font-size:10px;color:var(--z-sub);">Auto-filling…</div>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.4 OTP Auto-Read</div>
+</div>
+
+<!-- 3.5 OTP Verification -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="back" style="margin-bottom:20px;">←</div>
+        <div class="auth-head">Enter OTP 🔐</div>
+        <div class="auth-sub">Sent to +91 98765 43210</div>
+        <div class="otp-grid">
+          <div class="otp-box">4</div><div class="otp-box">2</div>
+          <div class="otp-box">8</div><div class="otp-box">1</div>
+          <div class="otp-box">9</div>
+          <div class="otp-box" style="border-color:var(--z-blue);background:var(--z-blue-lt);opacity:.4;"><span style="animation:blink .8s infinite;display:inline-block;width:2px;height:20px;background:var(--z-blue);"></span></div>
+        </div>
+        <div class="resend-row"><span>Resend in <b>22s</b></span></div>
+        <button class="btn btn-primary">Verify OTP ✓</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.5 OTP Verify</div>
+</div>
+
+<!-- 3.6 Wrong OTP -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="back" style="margin-bottom:20px;">←</div>
+        <div class="auth-head" style="color:var(--z-red);">Wrong OTP ⚠️</div>
+        <div class="auth-sub">OTP doesn't match. 2 attempts remaining before lockout.</div>
+        <div class="otp-grid">
+          <div class="otp-box err">1</div><div class="otp-box err">2</div>
+          <div class="otp-box err">3</div><div class="otp-box err">4</div>
+          <div class="otp-box err">5</div><div class="otp-box err">6</div>
+        </div>
+        <div style="background:#FFF0F0;border-radius:10px;padding:10px 12px;display:flex;gap:8px;margin-bottom:14px;">
+          <span>⚠️</span><span style="font-size:10px;color:var(--z-red);font-weight:600;">Incorrect OTP. Please check SMS or WhatsApp and try again.</span>
+        </div>
+        <button class="btn btn-red" style="margin-bottom:8px;">Try Again</button>
+        <button class="btn btn-ghost">Resend OTP</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.6 Wrong OTP</div>
+</div>
+
+<!-- 3.7 OTP Expired -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth" style="align-items:center;text-align:center;">
+        <div style="font-size:54px;margin-bottom:12px;">⏰</div>
+        <div class="auth-head">OTP Expired</div>
+        <div class="auth-sub">Your OTP has expired. OTPs are valid for 10 minutes only for security.</div>
+        <div style="background:#FFF8E6;border-radius:12px;padding:10px 14px;margin:12px 0;display:flex;gap:8px;">
+          <span>💡</span><span style="font-size:10px;color:var(--z-yellow);font-weight:600;text-align:left;">Tip: Check WhatsApp for a faster OTP delivery next time</span>
+        </div>
+        <button class="btn btn-primary">Resend New OTP</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.7 OTP Expired</div>
+</div>
+
+<!-- 3.8 OTP Timeout -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth" style="align-items:center;text-align:center;">
+        <div style="font-size:54px;margin-bottom:12px;">📡</div>
+        <div class="auth-head">Network Delay</div>
+        <div class="auth-sub">OTP delivery is taking longer than expected due to network congestion.</div>
+        <div style="background:var(--z-blue-lt);border-radius:12px;padding:10px 14px;margin:12px 0;display:flex;gap:8px;text-align:left;">
+          <span>📱</span>
+          <div style="font-size:10px;color:var(--z-blue);font-weight:600;">Your OTP will arrive via SMS within 2 minutes. WhatsApp delivery is faster.</div>
+        </div>
+        <div style="display:flex;gap:8px;width:100%;">
+          <button class="btn btn-ghost" style="font-size:11px;">Wait</button>
+          <button class="btn btn-primary" style="font-size:11px;">Try WhatsApp OTP</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.8 OTP Timeout</div>
+</div>
+
+<!-- 3.9 Resend Cooldown -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="back" style="margin-bottom:20px;">←</div>
+        <div class="auth-head">Resend OTP</div>
+        <div class="auth-sub">Cooldown active — please wait before requesting a new OTP</div>
+        <div style="background:var(--z-bg);border-radius:14px;padding:16px;text-align:center;margin:14px 0;">
+          <div style="font-size:40px;font-weight:900;color:var(--z-blue);line-height:1;">48</div>
+          <div style="font-size:11px;color:var(--z-sub);margin-top:2px;">seconds remaining</div>
+          <div style="margin-top:10px;height:6px;background:var(--z-border);border-radius:3px;overflow:hidden;">
+            <div style="height:100%;width:75%;background:linear-gradient(90deg,var(--z-blue),var(--z-orange));border-radius:3px;"></div>
+          </div>
+        </div>
+        <button class="btn btn-primary" style="opacity:.4;cursor:not-allowed;">Resend OTP (wait 48s)</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.9 Resend Cooldown</div>
+</div>
+
+<!-- 3.10 Too Many Attempts -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar" style="background:#1a0000;"><span class="t" style="color:#fff">9:41</span><span class="i" style="color:#ff8888">●●●</span></div>
+    <div class="scr">
+      <div class="lock-screen">
+        <div style="font-size:64px;filter:drop-shadow(0 8px 20px rgba(255,59,59,.3));">🔒</div>
+        <div class="chip chip-r">Account Locked</div>
+        <div style="font-size:17px;font-weight:900;color:var(--z-red);">Too Many Attempts</div>
+        <div style="font-size:11px;color:var(--z-sub);line-height:1.65;text-align:center;">Your account has been temporarily locked after 5 failed OTP attempts. Try again in 30 minutes.</div>
+        <div style="background:#FFF0F0;border-radius:14px;padding:14px;width:100%;text-align:center;">
+          <div style="font-size:28px;font-weight:900;color:var(--z-red);">28:45</div>
+          <div style="font-size:10px;color:var(--z-sub);margin-top:2px;">Unlock in</div>
+        </div>
+        <button class="btn btn-ghost" style="font-size:11px;">Contact Support</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.10 Too Many Attempts</div>
+</div>
+
+<!-- 3.11 Email Linkage -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="back" style="margin-bottom:16px;">←</div>
+        <div style="font-size:42px;margin-bottom:12px;">📧</div>
+        <div class="auth-head">Link Email <span style="font-size:12px;color:var(--z-muted);font-weight:600;">(Optional)</span></div>
+        <div class="auth-sub">Get backup access via email if you change your number. Also receive monthly spend summaries.</div>
+        <div style="font-size:10px;font-weight:700;color:var(--z-sub);margin-bottom:5px;">EMAIL ADDRESS</div>
+        <div class="inp focus" style="margin-bottom:14px;">
+          <span style="font-size:14px;">✉️</span>
+          <span style="font-size:12px;color:var(--z-text);">rahul.mehta@gmail.com</span>
+        </div>
+        <button class="btn btn-primary" style="margin-bottom:8px;">Link Email</button>
+        <button class="btn btn-ghost" style="background:transparent;color:var(--z-sub);font-size:12px;">Skip for now</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.11 Email Linkage</div>
+</div>
+
+<!-- 3.12 Login Success -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div style="background:linear-gradient(160deg,var(--z-blue-lt),#fff);height:100%;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:14px;text-align:center;">
+        <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--z-green),#00A060);display:flex;align-items:center;justify-content:center;box-shadow:0 12px 32px rgba(0,196,122,.35);animation:successPop .5s cubic-bezier(0.175,0.885,0.32,1.275);">
+          <span style="font-size:36px;color:#fff;">✓</span>
+        </div>
+        <style>@keyframes successPop{from{transform:scale(0)}to{transform:scale(1)}}</style>
+        <div style="font-size:20px;font-weight:900;color:var(--z-text);">Welcome, Rahul! 👋</div>
+        <div style="font-size:11px;color:var(--z-sub);line-height:1.6;">Logged in successfully. Taking you to the store…</div>
+        <div style="display:flex;gap:8px;">
+          <div class="chip chip-g">✓ Verified</div>
+          <div class="chip chip-b">Gold Member ⭐</div>
+        </div>
+        <div class="sync-progress" style="width:180px;"></div>
+        <div style="font-size:10px;color:var(--z-muted);">Syncing store catalog…</div>
+      </div>
+    </div>
+  </div>
+  <div class="label">3.12 Login Success</div>
+</div>
+
+</div><!-- end auth grid -->
+
+<!-- ═══════════════════════════════════
+     SECTION 4 — PERMISSIONS
+═══════════════════════════════════ -->
+<h2 class="section-title">④ Permissions &amp; Device Trust</h2>
+<div class="grid">
+
+<!-- 4.1 Location Permission -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:var(--z-blue-lt);"><span>📍</span></div>
+        <div class="perm-title">Enable Location</div>
+        <div class="perm-desc">Zippyra uses your location to auto-detect nearby stores and apply the right product catalog &amp; pricing instantly.</div>
+        <div style="background:var(--z-bg);border-radius:14px;padding:12px 16px;width:100%;text-align:left;">
+          <div style="font-size:11px;font-weight:800;color:var(--z-text);margin-bottom:6px;">Why we need this</div>
+          <div style="font-size:10px;color:var(--z-sub);line-height:1.6;">• Auto-connect to store when you enter<br>• Apply correct prices &amp; offers<br>• Enable GPS-based store navigation<br>• Never accessed outside the store</div>
+        </div>
+        <button class="btn btn-primary">Allow Location 📍</button>
+        <button class="btn btn-ghost">Not Now</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">4.1 Location Request</div>
+</div>
+
+<!-- 4.2 Location Denied -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:#FFF0F0;"><span>📍</span></div>
+        <div class="perm-denied" style="width:100%;margin:0;"><span>⚠️ Location access was denied. Some features will be limited.</span></div>
+        <div class="perm-title">Location Denied</div>
+        <div class="perm-desc">Without location, you'll need to manually enter the store code each time. Some features like store maps &amp; nearby deals won't work.</div>
+        <div style="background:var(--z-bg);border-radius:12px;padding:12px;width:100%;text-align:left;">
+          <div style="font-size:11px;font-weight:800;color:var(--z-text);margin-bottom:6px;">Limited Features 🔇</div>
+          <div style="font-size:10px;color:var(--z-sub);line-height:1.6;">✗ Auto store detection<br>✗ Store navigation map<br>✓ Manual store code entry works<br>✓ Scan &amp; pay still works</div>
+        </div>
+        <button class="btn btn-primary">Open Settings</button>
+        <button class="btn btn-ghost">Continue Limited Mode</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">4.2 Location Denied</div>
+</div>
+
+<!-- 4.3 Location Blocked -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:#FFF0F0;"><span>🚫</span></div>
+        <div class="perm-title">Location Blocked</div>
+        <div class="perm-desc">Location permission is permanently blocked in your device settings. Please enable it manually to use full features.</div>
+        <div style="background:#FFF8E6;border-radius:12px;padding:12px;width:100%;text-align:left;">
+          <div style="font-size:11px;font-weight:800;color:var(--z-yellow);margin-bottom:6px;">How to fix this</div>
+          <div style="font-size:10px;color:var(--z-sub);line-height:1.6;">1. Go to Phone Settings<br>2. Apps → Zippyra → Permissions<br>3. Enable Location → While Using App</div>
+        </div>
+        <button class="btn btn-primary">Open Phone Settings</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">4.3 Location Blocked</div>
+</div>
+
+<!-- 4.4 Camera Permission -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:#E8F5FF;"><span>📷</span></div>
+        <div class="perm-title">Camera Required</div>
+        <div class="perm-desc">The camera is your checkout scanner. Point it at any product barcode to add items to your cart instantly.</div>
+        <div style="background:var(--z-bg);border-radius:14px;padding:12px 16px;width:100%;text-align:left;">
+          <div style="font-size:10px;color:var(--z-sub);line-height:1.6;">📸 Barcode scanning<br>🗺️ Store QR codes<br>📄 Exit gate validation<br>🚫 Never records video</div>
+        </div>
+        <button class="btn btn-primary">Allow Camera 📷</button>
+        <button class="btn btn-ghost">Not Now</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">4.4 Camera Request</div>
+</div>
+
+<!-- 4.5 Camera Denied -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:#FFF0F0;"><span>📷</span></div>
+        <div class="perm-denied" style="width:100%;margin:0;"><span>⚠️ Camera access denied — scanning won't work</span></div>
+        <div class="perm-title">Camera Denied</div>
+        <div class="perm-desc">Without camera access you cannot scan barcodes. The app's core feature won't work. Please enable camera access.</div>
+        <button class="btn btn-primary">Open Settings to Fix</button>
+        <div style="font-size:10px;color:var(--z-sub);text-align:center;">Alternatively, staff at the store can assist you</div>
+      </div>
+    </div>
+  </div>
+  <div class="label">4.5 Camera Denied</div>
+</div>
+
+<!-- 4.6 Camera Hardware Failure -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:#FFF0F0;"><span>🔧</span></div>
+        <div class="chip chip-r">Hardware Issue</div>
+        <div class="perm-title">Camera Not Working</div>
+        <div class="perm-desc">We couldn't access your device camera. This may be a hardware issue or another app is using the camera.</div>
+        <div style="background:#FFF8E6;border-radius:12px;padding:12px;width:100%;text-align:left;">
+          <div style="font-size:10px;color:var(--z-sub);line-height:1.6;">• Close all other camera apps<br>• Restart the Zippyra app<br>• Restart your device<br>• If issue persists, contact store staff</div>
+        </div>
+        <button class="btn btn-primary">Try Again</button>
+        <button class="btn btn-ghost">Use Staff Kiosk Instead</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">4.6 Camera Failure</div>
+</div>
+
+<!-- 4.7 Notification Permission -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:#FFF8E6;"><span>🔔</span></div>
+        <div class="perm-title">Enable Notifications</div>
+        <div class="perm-desc">Stay updated on flash sales, order confirmations, exit gate alerts and personalized offers.</div>
+        <div style="display:flex;flex-direction:column;gap:7px;width:100%;">
+          <div style="display:flex;gap:10px;align-items:center;background:var(--z-bg);border-radius:10px;padding:10px;"><span>🛒</span><span style="font-size:10px;font-weight:700;color:var(--z-text);">Order &amp; payment confirmations</span></div>
+          <div style="display:flex;gap:10px;align-items:center;background:var(--z-bg);border-radius:10px;padding:10px;"><span>⚡</span><span style="font-size:10px;font-weight:700;color:var(--z-text);">Flash sale alerts &amp; limited offers</span></div>
+          <div style="display:flex;gap:10px;align-items:center;background:var(--z-bg);border-radius:10px;padding:10px;"><span>🚪</span><span style="font-size:10px;font-weight:700;color:var(--z-text);">Exit gate &amp; store entry alerts</span></div>
+        </div>
+        <button class="btn btn-primary">Allow Notifications 🔔</button>
+        <button class="btn btn-ghost">Skip</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">4.7 Notifications</div>
+</div>
+
+</div>
+
+<!-- ═══════════════════════════════════
+     SECTION 5 — STORE DETECTION
+═══════════════════════════════════ -->
+<h2 class="section-title">⑤ Store Detection &amp; Binding</h2>
+<div class="grid">
+
+<!-- 5.1 Detecting -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-store">
+        <div class="inner-hdr"><span class="pg-title">Find Nearby Store</span></div>
+        <div class="detecting-area">
+          <div style="position:relative;width:100px;height:100px;display:flex;align-items:center;justify-content:center;">
+            <div class="pulse-ring" style="position:absolute;"></div>
+            <div class="pulse-ring pulse-ring2" style="position:absolute;"></div>
+            <div class="pulse-ring3 pulse-ring" style="position:absolute;"></div>
+            <div class="pulse-center">🏪</div>
+          </div>
+          <div style="font-size:15px;font-weight:900;color:var(--z-text);">Detecting Nearby Store</div>
+          <div style="font-size:11px;color:var(--z-sub);">Using GPS + Bluetooth to find your store…</div>
+          <div class="sync-progress" style="width:160px;"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.1 Detecting Store</div>
+</div>
+
+<!-- 5.2 No Store Found -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-store">
+        <div class="inner-hdr"><span class="pg-title">Store Detection</span></div>
+        <div class="detecting-area">
+          <div style="font-size:64px;opacity:.5;">🏪</div>
+          <div class="chip chip-o">No Store Found</div>
+          <div style="font-size:15px;font-weight:900;color:var(--z-text);">No Zippyra Store Nearby</div>
+          <div style="font-size:11px;color:var(--z-sub);line-height:1.6;text-align:center;">We couldn't find a Zippyra-enabled store near you. Enter a store code manually or scan the store QR.</div>
+          <button class="btn btn-primary">Enter Store Code</button>
+          <button class="btn btn-ghost">Scan Store QR</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.2 No Store Found</div>
+</div>
+
+<!-- 5.3 Multiple Stores -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-store">
+        <div class="inner-hdr"><span class="pg-title">Choose Your Store</span></div>
+        <div style="padding:12px 14px;flex:1;overflow-y:auto;">
+          <div style="font-size:11px;color:var(--z-sub);margin-bottom:10px;">3 stores detected nearby</div>
+          <div class="store-card" style="margin-bottom:8px;border:2px solid var(--z-blue);background:var(--z-blue-lt);">
+            <div class="store-thumb">🏪</div>
+            <div style="flex:1;">
+              <div class="store-name">Zippyra Koramangala</div>
+              <div class="store-dist">80 Feet Rd, Block 4</div>
+              <div class="store-sla">📍 48m · ⚡ Open · Scan ready</div>
+            </div>
+            <div class="chip chip-b">Nearest</div>
+          </div>
+          <div class="store-card" style="margin-bottom:8px;">
+            <div class="store-thumb">🏬</div>
+            <div style="flex:1;">
+              <div class="store-name">Zippyra Indiranagar</div>
+              <div class="store-dist">12th Main Rd</div>
+              <div class="store-sla">📍 1.2km · ⚡ Open</div>
+            </div>
+          </div>
+          <div class="store-card">
+            <div class="store-thumb">🏪</div>
+            <div style="flex:1;">
+              <div class="store-name">Zippyra HSR Layout</div>
+              <div class="store-dist">Sector 1</div>
+              <div class="store-sla">📍 2.4km · ⚡ Open</div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.3 Multiple Stores</div>
+</div>
+
+<!-- 5.4 BLE Auto-Detected -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-store">
+        <div class="detecting-area">
+          <div style="font-size:54px;animation:floatY 2s ease-in-out infinite;">📡</div>
+          <div class="chip chip-g">BLE Beacon Detected</div>
+          <div style="font-size:15px;font-weight:900;color:var(--z-text);">Zippyra Koramangala</div>
+          <div style="font-size:11px;color:var(--z-sub);">Detected via Bluetooth beacon · 12m away</div>
+          <div class="store-card" style="width:100%;border-color:var(--z-green);background:#F0FFF8;">
+            <div class="store-thumb" style="background:#D0F9EB;">📍</div>
+            <div style="flex:1;"><div class="store-name">Auto-connecting…</div><div class="store-dist">80 Feet Rd, Block 4, Koramangala</div></div>
+          </div>
+          <div class="sync-progress" style="width:180px;"></div>
+          <button class="btn btn-green" style="width:180px;font-size:12px;">Confirm — Connect Now</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.4 BLE Auto-Detect</div>
+</div>
+
+<!-- 5.5 Manual QR Scan -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar wh" style="background:transparent;position:absolute;top:0;width:100%;z-index:10;padding:8px 22px 0;display:flex;justify-content:space-between;">
+      <span class="t" style="color:#fff;">9:41</span><span style="color:rgba(255,255,255,.5);font-size:9px;">●●●</span>
+    </div>
+    <div class="scr">
+      <div style="background:#000;height:100%;display:flex;flex-direction:column;">
+        <div style="flex:1;background:linear-gradient(180deg,#111,#1a1a2e);display:flex;align-items:center;justify-content:center;position:relative;">
+          <div style="width:170px;height:170px;position:relative;">
+            <div style="position:absolute;top:0;left:0;width:24px;height:24px;border:3px solid var(--z-orange);border-right:none;border-bottom:none;border-radius:4px 0 0 0;"></div>
+            <div style="position:absolute;top:0;right:0;width:24px;height:24px;border:3px solid var(--z-orange);border-left:none;border-bottom:none;border-radius:0 4px 0 0;"></div>
+            <div style="position:absolute;bottom:0;left:0;width:24px;height:24px;border:3px solid var(--z-orange);border-right:none;border-top:none;border-radius:0 0 0 4px;"></div>
+            <div style="position:absolute;bottom:0;right:0;width:24px;height:24px;border:3px solid var(--z-orange);border-left:none;border-top:none;border-radius:0 0 4px 0;"></div>
+            <div style="position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--z-orange),transparent);top:50%;animation:scanAnim 2s ease-in-out infinite;"></div>
+            <style>@keyframes scanAnim{0%,100%{top:5%}50%{top:90%}}</style>
+          </div>
+          <div style="position:absolute;bottom:16px;background:rgba(0,0,0,.6);border-radius:10px;padding:6px 14px;"><span style="font-size:10px;color:#fff;font-weight:600;">Scan the store entrance QR code</span></div>
+        </div>
+        <div style="background:#1a1a2e;padding:14px 16px;">
+          <div style="font-size:11px;color:#fff;font-weight:700;margin-bottom:4px;">Manual Store QR Scan</div>
+          <div style="font-size:9px;color:#8888aa;">Look for the Zippyra QR poster at the store entrance</div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.5 Store QR Scan</div>
+</div>
+
+<!-- 5.6 Manual Code Entry -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="back" style="margin-bottom:16px;">←</div>
+        <div style="font-size:40px;margin-bottom:12px;">🏪</div>
+        <div class="auth-head">Enter Store Code</div>
+        <div class="auth-sub">Get the 6-digit store code from the store entrance or staff</div>
+        <div style="font-size:10px;font-weight:700;color:var(--z-sub);margin-bottom:5px;">STORE CODE</div>
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <div class="otp-box">K</div><div class="otp-box">O</div><div class="otp-box">R</div>
+          <div class="otp-box" style="border-style:dashed;opacity:.4;"></div>
+          <div class="otp-box" style="border-style:dashed;opacity:.4;"></div>
+          <div class="otp-box" style="border-style:dashed;opacity:.4;"></div>
+        </div>
+        <button class="btn btn-primary">Find Store</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.6 Manual Code Entry</div>
+</div>
+
+<!-- 5.7 Invalid Store Code -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-auth">
+        <div class="back" style="margin-bottom:16px;">←</div>
+        <div style="font-size:40px;margin-bottom:12px;">🏪</div>
+        <div class="auth-head" style="color:var(--z-red);">Invalid Code ⚠️</div>
+        <div style="display:flex;gap:8px;margin-bottom:8px;">
+          <div class="otp-box err">X</div><div class="otp-box err">Y</div><div class="otp-box err">Z</div>
+          <div class="otp-box err">9</div><div class="otp-box err">9</div><div class="otp-box err">9</div>
+        </div>
+        <div class="err-msg" style="margin-bottom:14px;"><span>⚠️</span><span>Store code not found. Check and try again.</span></div>
+        <button class="btn btn-primary" style="margin-bottom:8px;">Try Again</button>
+        <button class="btn btn-ghost">Scan QR Instead</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.7 Invalid Store Code</div>
+</div>
+
+<!-- 5.8 Store Confirmation -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-store">
+        <div class="inner-hdr"><span class="pg-title">Confirm Store</span></div>
+        <div style="padding:16px 14px;flex:1;">
+          <div style="background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));border-radius:18px;padding:16px;text-align:center;margin-bottom:14px;">
+            <div style="font-size:44px;margin-bottom:8px;">🏪</div>
+            <div style="font-size:16px;font-weight:900;color:#fff;">Zippyra Koramangala</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.7);margin-top:4px;">80 Feet Rd, Block 4 · Bengaluru 560095</div>
+            <div style="display:flex;gap:6px;justify-content:center;margin-top:8px;">
+              <div class="chip chip-g">Open</div>
+              <div class="chip chip-b">200+ checkouts</div>
+            </div>
+          </div>
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:14px;">
+            <div style="background:#fff;border:1px solid var(--z-border);border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:18px;">⚡</div>
+              <div style="font-size:11px;font-weight:800;color:var(--z-text);">Scan Ready</div>
+              <div style="font-size:9px;color:var(--z-sub);">All systems live</div>
+            </div>
+            <div style="background:#fff;border:1px solid var(--z-border);border-radius:12px;padding:10px;text-align:center;">
+              <div style="font-size:18px;">🚪</div>
+              <div style="font-size:11px;font-weight:800;color:var(--z-green);">Exit Gate OK</div>
+              <div style="font-size:9px;color:var(--z-sub);">RFID active</div>
+            </div>
+          </div>
+          <button class="btn btn-primary" style="margin-bottom:8px;">✓ Confirm &amp; Enter Store</button>
+          <button class="btn btn-ghost">Choose Different Store</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.8 Store Confirm</div>
+</div>
+
+<!-- 5.9 Store Syncing -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="detecting-area" style="background:#fff;height:100%;display:flex;flex-direction:column;">
+        <div style="font-size:54px;animation:floatY 2s ease-in-out infinite;margin-bottom:12px;">☁️</div>
+        <div style="font-size:15px;font-weight:900;color:var(--z-text);margin-bottom:6px;">Syncing Store Catalog</div>
+        <div style="font-size:10px;color:var(--z-sub);margin-bottom:14px;text-align:center;">Loading 4,200+ products, offers &amp; real-time stock…</div>
+        <div class="sync-progress" style="width:200px;"></div>
+        <div style="font-size:10px;color:var(--z-muted);margin-top:6px;">68% — Downloading pricing rules…</div>
+        <div style="background:var(--z-bg);border-radius:12px;padding:10px 14px;margin-top:14px;width:90%;text-align:left;">
+          <div style="display:flex;gap:6px;margin-bottom:4px;"><span style="color:var(--z-green);font-size:11px;">✓</span><span style="font-size:10px;color:var(--z-sub);">Products catalog loaded</span></div>
+          <div style="display:flex;gap:6px;margin-bottom:4px;"><span style="color:var(--z-green);font-size:11px;">✓</span><span style="font-size:10px;color:var(--z-sub);">GST &amp; pricing rules loaded</span></div>
+          <div style="display:flex;gap:6px;"><span style="color:var(--z-yellow);font-size:11px;">⏳</span><span style="font-size:10px;color:var(--z-sub);">Active offers loading…</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.9 Store Syncing</div>
+</div>
+
+<!-- 5.10 Sync Failed -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:#FFF0F0;"><span>❌</span></div>
+        <div class="chip chip-r">Sync Failed</div>
+        <div class="perm-title">Catalog Sync Failed</div>
+        <div class="perm-desc">Failed to load the store product catalog. This could be a network issue or a temporary server problem.</div>
+        <button class="btn btn-primary" style="margin-bottom:8px;">🔄 Retry Sync</button>
+        <button class="btn btn-ghost">Continue in Offline Mode</button>
+        <div style="font-size:9px;color:var(--z-muted);text-align:center;">Offline mode uses cached catalog (may be 24hrs old)</div>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.10 Sync Failed</div>
+</div>
+
+<!-- 5.11 Store Closed -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm" style="background:linear-gradient(180deg,#F0F0FA,#fff);">
+        <div class="perm-icon" style="background:#EEF0F8;"><span>🌙</span></div>
+        <div class="chip chip-o">Store Closed</div>
+        <div class="perm-title">Zippyra Koramangala</div>
+        <div class="perm-desc">This store is currently closed. Operating hours are 8:00 AM – 10:00 PM, 7 days a week.</div>
+        <div style="background:var(--z-bg);border-radius:12px;padding:12px;width:100%;text-align:left;">
+          <div style="font-size:11px;font-weight:800;color:var(--z-text);margin-bottom:6px;">Opens in</div>
+          <div style="font-size:28px;font-weight:900;color:var(--z-blue);">7h 22m</div>
+          <div style="font-size:10px;color:var(--z-sub);">Tomorrow at 8:00 AM</div>
+        </div>
+        <button class="btn btn-ghost">Find Another Open Store</button>
+        <button class="btn btn-primary">Set Opening Reminder 🔔</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.11 Store Closed</div>
+</div>
+
+<!-- 5.12 Store Busy -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="i">●●●</span></div>
+    <div class="scr">
+      <div class="s-perm">
+        <div class="perm-icon" style="background:#FFF8E6;"><span>👥</span></div>
+        <div class="chip chip-y">High Traffic</div>
+        <div class="perm-title">Store at Capacity</div>
+        <div class="perm-desc">The store is currently at maximum capacity. Expected wait: 12 minutes. Join the virtual queue to enter next.</div>
+        <div style="background:var(--z-bg);border-radius:12px;padding:12px;width:100%;text-align:center;">
+          <div style="font-size:28px;font-weight:900;color:var(--z-orange);">Queue #47</div>
+          <div style="font-size:10px;color:var(--z-sub);">Est. wait: 12 minutes</div>
+          <div style="margin-top:8px;height:6px;background:var(--z-border);border-radius:3px;overflow:hidden;"><div style="height:100%;width:30%;background:var(--z-orange);border-radius:3px;"></div></div>
+        </div>
+        <button class="btn btn-orange">Join Virtual Queue 👥</button>
+        <button class="btn btn-ghost">Find Another Store</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">5.12 Store Busy</div>
+</div>
+
+</div>
+
+<!-- Footer nav -->
+<div style="margin-top:48px;color:#333;font-size:11px;text-align:center;font-weight:600;">
+  <span>Zippyra UI Kit · Part 1 of 4 · Flows 1–5 ·</span>
+  <a href="part2.html" style="color:var(--z-orange);font-weight:800;text-decoration:none;"> Part 2: Home · Scan · Cart →</a>
+</div>
+
+</body>
+</html>

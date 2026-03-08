@@ -1,0 +1,917 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zippyra — Flows 7–9: Home · Scan · Cart</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --z-blue:#1A5EAB;--z-blue-dk:#0E3D7A;--z-blue-lt:#E8F1FB;
+  --z-orange:#F7941D;--z-orange-lt:#FFF3E0;
+  --z-green:#00C47A;--z-red:#FF3B3B;--z-yellow:#FFB800;
+  --z-bg:#F4F5FA;--z-card:#FFFFFF;--z-border:#ECEDF2;
+  --z-text:#0D0D1A;--z-sub:#6B6B8A;--z-muted:#B0B0C8;
+  --ff:'Plus Jakarta Sans',sans-serif;
+}
+body{background:#12121F;font-family:var(--ff);padding:32px 20px;display:flex;flex-direction:column;align-items:center;}
+h2.st{color:#fff;font-size:13px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin:32px 0 20px;opacity:.5;width:100%;max-width:1700px;}
+.grid{display:flex;flex-wrap:wrap;gap:20px;justify-content:flex-start;max-width:1700px;width:100%;}
+.frame{display:flex;flex-direction:column;align-items:center;gap:8px;}
+.label{color:#555;font-size:9px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;}
+.phone{width:300px;height:648px;background:var(--z-bg);border-radius:46px;border:7px solid #222240;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 30px 60px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.03);}
+.notch{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:88px;height:22px;background:#000;border-radius:11px;z-index:100;}
+.sbar{height:38px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 6px;flex-shrink:0;position:relative;z-index:10;}
+.t{font-size:11px;font-weight:800;color:var(--z-text);}
+.ii{font-size:9px;color:var(--z-sub);}
+.scr{flex:1;overflow:hidden;position:relative;}
+.scroll{overflow-y:auto;scrollbar-width:none;}
+.scroll::-webkit-scrollbar{display:none;}
+.hscroll{overflow-x:auto;scrollbar-width:none;}
+.hscroll::-webkit-scrollbar{display:none;}
+.btn{border:none;border-radius:14px;font-family:var(--ff);font-weight:800;cursor:pointer;padding:13px 20px;font-size:13px;width:100%;}
+.btn-p{background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));color:#fff;box-shadow:0 6px 20px rgba(26,94,171,.35);}
+.btn-g{background:var(--z-blue-lt);color:var(--z-blue);}
+.btn-orange{background:linear-gradient(135deg,var(--z-orange),#D97B0A);color:#fff;}
+.btn-green{background:linear-gradient(135deg,var(--z-green),#00A060);color:#fff;}
+.btn-red{background:linear-gradient(135deg,var(--z-red),#CC2222);color:#fff;}
+.chip{display:inline-flex;align-items:center;gap:4px;padding:4px 9px;border-radius:20px;font-size:9px;font-weight:800;}
+.cg{background:#E6FFF4;color:var(--z-green);}
+.co{background:var(--z-orange-lt);color:var(--z-orange);}
+.cb{background:var(--z-blue-lt);color:var(--z-blue);}
+.cr{background:#FFF0F0;color:var(--z-red);}
+.cy{background:#FFF8E6;color:var(--z-yellow);}
+.bnav{height:58px;background:#fff;border-top:1px solid var(--z-border);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding:0 4px 6px;}
+.bni{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;cursor:pointer;padding:4px 0;}
+.bni .ico{font-size:19px;}
+.bni .lbl{font-size:8px;font-weight:700;color:var(--z-muted);}
+.bni.act .lbl{color:var(--z-blue);}
+.bnav-scan-btn{width:42px;height:42px;background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));border-radius:13px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(26,94,171,.4);position:relative;top:-8px;}
+.ihdr{background:#fff;padding:10px 16px;border-bottom:1px solid var(--z-border);display:flex;align-items:center;gap:10px;flex-shrink:0;}
+.bk{width:30px;height:30px;border-radius:10px;background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:13px;flex-shrink:0;}
+.pg{font-size:14px;font-weight:800;color:var(--z-text);}
+.sec{display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;}
+.sec .tt{font-size:13px;font-weight:800;color:var(--z-text);}
+.sec .sa{font-size:10px;font-weight:700;color:var(--z-blue);}
+/* cart item */
+.ci{background:#fff;border-radius:14px;border:1px solid var(--z-border);padding:11px 12px;display:flex;align-items:center;gap:10px;margin-bottom:8px;}
+.ci-img{font-size:30px;flex-shrink:0;}
+.ci-body{flex:1;}
+.ci-name{font-size:11px;font-weight:700;color:var(--z-text);}
+.ci-wt{font-size:9px;color:var(--z-muted);}
+.ci-price{font-size:12px;font-weight:800;color:var(--z-text);}
+.qty{display:flex;align-items:center;border:1px solid var(--z-border);border-radius:9px;overflow:hidden;}
+.qty button{width:24px;height:24px;border:none;background:var(--z-blue-lt);color:var(--z-blue);font-size:14px;cursor:pointer;font-family:var(--ff);font-weight:800;}
+.qty span{width:24px;text-align:center;font-size:11px;font-weight:800;color:var(--z-text);}
+/* product card */
+.pc{background:#fff;border-radius:14px;border:1px solid var(--z-border);padding:10px;position:relative;cursor:pointer;}
+.pc-img{font-size:36px;text-align:center;display:block;margin:6px 0;filter:drop-shadow(0 4px 10px rgba(0,0,0,.12));}
+.pc-name{font-size:11px;font-weight:700;color:var(--z-text);}
+.pc-wt{font-size:9px;color:var(--z-muted);margin:2px 0 6px;}
+.pc-row{display:flex;justify-content:space-between;align-items:center;}
+.pc-price{font-size:12px;font-weight:800;color:var(--z-text);}
+.pc-mrp{font-size:9px;color:var(--z-muted);text-decoration:line-through;margin-left:3px;}
+.add-btn{width:26px;height:26px;border-radius:8px;background:var(--z-blue);border:none;color:#fff;font-size:16px;cursor:pointer;display:flex;align-items:center;justify-content:center;}
+/* home header */
+.hh{background:#fff;padding:10px 14px 10px;border-bottom:1px solid var(--z-border);flex-shrink:0;}
+.lr{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px;}
+.li{display:flex;align-items:center;gap:6px;}
+.lic{width:26px;height:26px;border-radius:8px;background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:13px;}
+.ln{font-size:12px;font-weight:800;color:var(--z-text);}
+.la{font-size:9px;color:var(--z-sub);}
+.sla{background:#E6FFF4;border:1px solid #B3F0D5;border-radius:20px;padding:4px 9px;display:flex;align-items:center;gap:4px;}
+.slad{width:5px;height:5px;border-radius:50%;background:var(--z-green);}
+.slat{font-size:10px;font-weight:800;color:var(--z-green);}
+.sb{display:flex;align-items:center;gap:8px;background:#F0F1F6;border-radius:12px;padding:8px 12px;}
+/* offer banner */
+.ob{border-radius:18px;height:90px;display:flex;align-items:center;justify-content:space-between;padding:14px 16px;margin-bottom:12px;}
+.ob-l .obl{font-size:18px;font-weight:900;color:#fff;line-height:1;}
+.ob-l .obs{font-size:9px;color:rgba(255,255,255,.8);margin-top:2px;font-weight:600;}
+.ob-l .obc{background:rgba(255,255,255,.25);border-radius:7px;padding:4px 10px;margin-top:7px;display:inline-block;}
+.ob-l .obc span{font-size:9px;font-weight:800;color:#fff;}
+.ob-i{font-size:44px;filter:drop-shadow(0 4px 10px rgba(0,0,0,.2));}
+/* scan overlay */
+.scan-frame{width:170px;height:170px;position:relative;}
+.sf-c{position:absolute;width:26px;height:26px;border-color:var(--z-blue);border-style:solid;}
+.sf-tl{top:0;left:0;border-width:3px 0 0 3px;border-radius:4px 0 0 0;}
+.sf-tr{top:0;right:0;border-width:3px 3px 0 0;border-radius:0 4px 0 0;}
+.sf-bl{bottom:0;left:0;border-width:0 0 3px 3px;border-radius:0 0 0 4px;}
+.sf-br{bottom:0;right:0;border-width:0 3px 3px 0;border-radius:0 0 4px 0;}
+.sline{position:absolute;left:0;right:0;height:2px;background:linear-gradient(90deg,transparent,var(--z-blue),transparent);animation:sl 2s ease-in-out infinite;}
+@keyframes sl{0%,100%{top:5%}50%{top:90%}}
+/* cart bottom */
+.co-bar{background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));border-radius:14px;padding:12px 16px;display:flex;justify-content:space-between;align-items:center;}
+.co-l .cl{color:rgba(255,255,255,.7);font-size:10px;}
+.co-l .ca{color:#fff;font-size:16px;font-weight:900;}
+.co-btn{background:rgba(255,255,255,.2);border-radius:10px;padding:7px 14px;}
+.co-btn span{color:#fff;font-size:12px;font-weight:800;}
+/* animations */
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes cartBounce{0%{transform:scale(1)}30%{transform:scale(1.4)}60%{transform:scale(.9)}100%{transform:scale(1)}}
+@keyframes successPulse{0%{transform:scale(0);opacity:0}60%{transform:scale(1.1)}100%{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes shimmer{0%{background-position:200% 0}100%{background-position:-200% 0}}
+@keyframes popIn{from{transform:scale(.7) translateY(20px);opacity:0}to{transform:scale(1) translateY(0);opacity:1}}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════ SECTION 7: HOME & DISCOVERY ═══════════════ -->
+<h2 class="st">⑦ Home &amp; Discovery</h2>
+<div class="grid">
+
+<!-- 7.1 Home Dashboard -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="hh">
+        <div class="lr">
+          <div class="li"><div class="lic">📍</div><div><div class="ln">Koramangala ▾</div><div class="la">80 Feet Rd, Block 4</div></div></div>
+          <div style="display:flex;gap:6px;align-items:center;">
+            <div class="sla"><div class="slad"></div><span class="slat">12 mins</span></div>
+            <div style="position:relative;"><div style="width:32px;height:32px;border-radius:10px;background:#F0F1F6;display:flex;align-items:center;justify-content:center;font-size:17px;">🛒</div><div style="position:absolute;top:-3px;right:-3px;width:16px;height:16px;border-radius:50%;background:var(--z-orange);display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:800;color:#fff;">3</div></div>
+          </div>
+        </div>
+        <div class="sb"><span style="font-size:14px;opacity:.4;">🔍</span><span style="font-size:11px;color:var(--z-muted);">Search "milk", "atta", "soap"…</span></div>
+      </div>
+      <!-- cats -->
+      <div style="background:#fff;display:flex;gap:7px;padding:8px 0 8px 14px;border-bottom:1px solid var(--z-border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;">
+        <button style="flex-shrink:0;padding:6px 12px;border-radius:20px;background:var(--z-blue);color:#fff;border:none;font-size:10px;font-weight:700;font-family:var(--ff);">All</button>
+        <button style="flex-shrink:0;padding:6px 12px;border-radius:20px;background:#F0F1F6;color:var(--z-sub);border:none;font-size:10px;font-weight:700;font-family:var(--ff);">🥦 Grocery</button>
+        <button style="flex-shrink:0;padding:6px 12px;border-radius:20px;background:#F0F1F6;color:var(--z-sub);border:none;font-size:10px;font-weight:700;font-family:var(--ff);">🥤 Drinks</button>
+        <button style="flex-shrink:0;padding:6px 12px;border-radius:20px;background:#F0F1F6;color:var(--z-sub);border:none;font-size:10px;font-weight:700;font-family:var(--ff);">🍪 Snacks</button>
+      </div>
+      <div class="scroll" style="flex:1;padding:12px 12px 0;">
+        <!-- offer banner -->
+        <div class="ob" style="background:linear-gradient(135deg,#1A5EAB,#0E3D7A);">
+          <div class="ob-l"><div class="obl">SCAN &amp; GO</div><div class="obs">Skip the queue forever</div><div class="obc"><span>Try Now →</span></div></div>
+          <span class="ob-i">📱</span>
+        </div>
+        <!-- Scan card -->
+        <div style="background:#fff;border-radius:16px;border:1px solid var(--z-border);padding:12px 14px;display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <div><div style="display:flex;align-items:center;gap:5px;margin-bottom:3px;"><div style="width:6px;height:6px;border-radius:50%;background:var(--z-green);"></div><span style="font-size:9px;font-weight:700;color:var(--z-green);">SELF-CHECKOUT LIVE</span></div><div style="font-size:14px;font-weight:900;color:var(--z-text);">Scan &amp; Go</div><div style="font-size:10px;color:var(--z-sub);">3 items · ₹387</div></div>
+          <div style="width:52px;height:52px;border-radius:16px;background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));display:flex;flex-direction:column;align-items:center;justify-content:center;box-shadow:0 4px 14px rgba(26,94,171,.4);"><span style="font-size:24px;">📷</span><span style="font-size:7px;font-weight:800;color:#fff;">SCAN</span></div>
+        </div>
+        <!-- exit badge -->
+        <div style="background:#F0FFF8;border:1px solid #B3F0D5;border-radius:13px;padding:10px 13px;display:flex;align-items:center;gap:10px;margin-bottom:12px;">
+          <div style="width:34px;height:34px;border-radius:10px;background:#D0F9EB;display:flex;align-items:center;justify-content:center;font-size:18px;">🚪</div>
+          <div style="flex:1;"><div style="font-size:11px;font-weight:800;color:var(--z-green);">Exit Gate Ready</div><div style="font-size:9px;color:var(--z-sub);">CV cameras + RFID active</div></div>
+          <div style="background:var(--z-green);border-radius:7px;padding:3px 8px;"><span style="font-size:8px;font-weight:800;color:#fff;">VALID</span></div>
+        </div>
+        <!-- Buy again -->
+        <div class="sec"><span class="tt">Buy Again ⚡</span><span class="sa">See All</span></div>
+        <div style="display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;padding-bottom:4px;margin-bottom:12px;">
+          <div style="flex-shrink:0;width:68px;background:#fff;border-radius:14px;border:1px solid var(--z-border);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-size:26px;">🍞</span><span style="font-size:9px;font-weight:600;color:var(--z-text);">Bread</span><span style="font-size:10px;font-weight:800;color:var(--z-blue);">₹45</span><button style="width:100%;height:22px;border-radius:7px;background:var(--z-blue-lt);border:none;font-size:14px;color:var(--z-blue);">+</button></div>
+          <div style="flex-shrink:0;width:68px;background:#fff;border-radius:14px;border:1px solid var(--z-border);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-size:26px;">🥛</span><span style="font-size:9px;font-weight:600;color:var(--z-text);">Milk</span><span style="font-size:10px;font-weight:800;color:var(--z-blue);">₹62</span><button style="width:100%;height:22px;border-radius:7px;background:var(--z-blue-lt);border:none;font-size:14px;color:var(--z-blue);">+</button></div>
+          <div style="flex-shrink:0;width:68px;background:#fff;border-radius:14px;border:1px solid var(--z-border);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-size:26px;">🥚</span><span style="font-size:9px;font-weight:600;color:var(--z-text);">Eggs</span><span style="font-size:10px;font-weight:800;color:var(--z-blue);">₹78</span><button style="width:100%;height:22px;border-radius:7px;background:var(--z-blue-lt);border:none;font-size:14px;color:var(--z-blue);">+</button></div>
+          <div style="flex-shrink:0;width:68px;background:#fff;border-radius:14px;border:1px solid var(--z-border);padding:8px 6px;display:flex;flex-direction:column;align-items:center;gap:4px;"><span style="font-size:26px;">🍌</span><span style="font-size:9px;font-weight:600;color:var(--z-text);">Banana</span><span style="font-size:10px;font-weight:800;color:var(--z-blue);">₹40</span><button style="width:100%;height:22px;border-radius:7px;background:var(--z-blue-lt);border:none;font-size:14px;color:var(--z-blue);">+</button></div>
+        </div>
+        <!-- products -->
+        <div class="sec"><span class="tt">Top Picks 🔥</span><span class="sa">View All</span></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-bottom:8px;">
+          <div class="pc"><div style="position:absolute;top:8px;left:8px;background:var(--z-orange);border-radius:5px;padding:2px 6px;font-size:7px;font-weight:800;color:#fff;">10% OFF</div><span class="pc-img">🧈</span><div class="pc-name">Amul Butter</div><div class="pc-wt">500g</div><div class="pc-row"><span><span class="pc-price">₹280</span><span class="pc-mrp">₹310</span></span><button class="add-btn">+</button></div></div>
+          <div class="pc"><div style="position:absolute;top:8px;left:8px;background:var(--z-red);border-radius:5px;padding:2px 6px;font-size:7px;font-weight:800;color:#fff;">HOT</div><span class="pc-img">🥔</span><div class="pc-name">Lay's Classic</div><div class="pc-wt">150g</div><div class="pc-row"><span class="pc-price">₹45</span><button class="add-btn">+</button></div></div>
+          <div class="pc"><div style="position:absolute;top:8px;left:8px;background:var(--z-green);border-radius:5px;padding:2px 6px;font-size:7px;font-weight:800;color:#fff;">15% OFF</div><span class="pc-img">🍵</span><div class="pc-name">Tata Tea Gold</div><div class="pc-wt">250g</div><div class="pc-row"><span><span class="pc-price">₹195</span><span class="pc-mrp">₹220</span></span><button class="add-btn">+</button></div></div>
+          <div class="pc"><span class="pc-img">🍪</span><div class="pc-name">Britannia NC</div><div class="pc-wt">300g</div><div class="pc-row"><span class="pc-price">₹85</span><button class="add-btn">+</button></div></div>
+        </div>
+      </div>
+      <div class="bnav">
+        <div class="bni act"><span class="ico">🏠</span><span class="lbl" style="color:var(--z-blue)">Home</span></div>
+        <div class="bni"><span class="ico">⊞</span><span class="lbl">Categ.</span></div>
+        <div class="bni"><div class="bnav-scan-btn"><span style="font-size:22px">📷</span></div><span class="lbl">Scan</span></div>
+        <div class="bni"><span class="ico">📦</span><span class="lbl">Orders</span></div>
+        <div class="bni"><span class="ico">👤</span><span class="lbl">Profile</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.1 Home Dashboard</div>
+</div>
+
+<!-- 7.2 Search Screen -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="hh">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="bk">←</div>
+          <div class="sb" style="flex:1;border:1.5px solid var(--z-blue);background:#fff;"><span style="font-size:14px;color:var(--z-blue);">🔍</span><span style="font-size:11px;color:var(--z-muted);">Search anything…</span><span style="width:2px;height:16px;background:var(--z-blue);animation:blink .8s infinite;display:inline-block;margin-left:2px;"></span></div>
+          <span style="font-size:11px;font-weight:700;color:var(--z-blue);">🎤</span>
+        </div>
+      </div>
+      <div class="scroll" style="flex:1;padding:12px;">
+        <div style="font-size:10px;font-weight:800;color:var(--z-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Recent Searches</div>
+        <div style="display:flex;flex-wrap:wrap;gap:6px;margin-bottom:16px;">
+          <div style="background:#fff;border:1px solid var(--z-border);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:600;color:var(--z-text);">🥛 Milk</div>
+          <div style="background:#fff;border:1px solid var(--z-border);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:600;color:var(--z-text);">🧈 Amul Butter</div>
+          <div style="background:#fff;border:1px solid var(--z-border);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:600;color:var(--z-text);">🍞 Bread</div>
+          <div style="background:#fff;border:1px solid var(--z-border);border-radius:20px;padding:5px 12px;font-size:10px;font-weight:600;color:var(--z-text);">🥚 Eggs</div>
+        </div>
+        <div style="font-size:10px;font-weight:800;color:var(--z-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Trending Now 🔥</div>
+        <div style="display:flex;flex-direction:column;gap:6px;">
+          <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px;border:1px solid var(--z-border);"><span style="font-size:22px;">🧃</span><span style="font-size:11px;font-weight:700;color:var(--z-text);">Real Juice Mango</span><span style="margin-left:auto;font-size:9px;color:var(--z-orange);font-weight:700;">Trending</span></div>
+          <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px;border:1px solid var(--z-border);"><span style="font-size:22px;">🍫</span><span style="font-size:11px;font-weight:700;color:var(--z-text);">Cadbury Dairy Milk</span><span style="margin-left:auto;font-size:9px;color:var(--z-red);font-weight:700;">Hot</span></div>
+          <div style="display:flex;align-items:center;gap:10px;background:#fff;border-radius:12px;padding:10px;border:1px solid var(--z-border);"><span style="font-size:22px;">🥤</span><span style="font-size:11px;font-weight:700;color:var(--z-text);">Red Bull Energy</span><span style="margin-left:auto;font-size:9px;color:var(--z-green);font-weight:700;">+40% Today</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.2 Search Screen</div>
+</div>
+
+<!-- 7.3 Search Typing Suggestions -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="hh">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="bk">←</div>
+          <div class="sb" style="flex:1;border:1.5px solid var(--z-blue);background:#fff;"><span style="font-size:14px;color:var(--z-blue);">🔍</span><span style="font-size:11px;color:var(--z-text);font-weight:700;">amul</span><span style="width:2px;height:16px;background:var(--z-blue);animation:blink .8s infinite;display:inline-block;margin-left:2px;"></span></div>
+        </div>
+      </div>
+      <div style="background:#fff;border-bottom:1px solid var(--z-border);flex:1;">
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--z-border);"><span style="font-size:14px;color:var(--z-muted);">🔍</span><div style="flex:1;"><span style="font-weight:800;color:var(--z-text);">amul</span> <span style="color:var(--z-muted);">butter</span></div><span style="color:var(--z-blue);font-size:11px;">↗</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--z-border);"><span style="font-size:14px;color:var(--z-muted);">🔍</span><div style="flex:1;"><span style="font-weight:800;color:var(--z-text);">amul</span> <span style="color:var(--z-muted);">milk</span></div><span style="color:var(--z-blue);font-size:11px;">↗</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--z-border);"><span style="font-size:14px;color:var(--z-muted);">🔍</span><div style="flex:1;"><span style="font-weight:800;color:var(--z-text);">amul</span> <span style="color:var(--z-muted);">cheese</span></div><span style="color:var(--z-blue);font-size:11px;">↗</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 16px;border-bottom:1px solid var(--z-border);"><span style="font-size:14px;">🧈</span><span style="font-size:11px;font-weight:700;color:var(--z-text);">Amul Butter 500g · Aisle B3</span></div>
+        <div style="display:flex;align-items:center;gap:10px;padding:11px 16px;"><span style="font-size:14px;">🥛</span><span style="font-size:11px;font-weight:700;color:var(--z-text);">Amul Taza Milk 1L · Aisle D1</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.3 Search Suggestions</div>
+</div>
+
+<!-- 7.4 Search Results -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="hh">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px;">
+          <div class="bk">←</div>
+          <div class="sb" style="flex:1;border:1.5px solid var(--z-blue);background:#fff;"><span style="font-size:14px;color:var(--z-blue);">🔍</span><span style="font-size:11px;color:var(--z-text);font-weight:700;">amul butter</span></div>
+        </div>
+        <div style="font-size:10px;color:var(--z-sub);">12 results for "amul butter"</div>
+      </div>
+      <!-- filter row -->
+      <div style="background:#fff;display:flex;gap:7px;padding:8px 0 8px 14px;border-bottom:1px solid var(--z-border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;">
+        <button style="flex-shrink:0;padding:5px 10px;border-radius:20px;background:var(--z-blue);color:#fff;border:none;font-size:9px;font-weight:700;font-family:var(--ff);">All</button>
+        <button style="flex-shrink:0;padding:5px 10px;border-radius:20px;background:#F0F1F6;color:var(--z-sub);border:none;font-size:9px;font-weight:700;font-family:var(--ff);">Offers</button>
+        <button style="flex-shrink:0;padding:5px 10px;border-radius:20px;background:#F0F1F6;color:var(--z-sub);border:none;font-size:9px;font-weight:700;font-family:var(--ff);">Under ₹200</button>
+        <button style="flex-shrink:0;padding:5px 10px;border-radius:20px;background:#F0F1F6;color:var(--z-sub);border:none;font-size:9px;font-weight:700;font-family:var(--ff);">Amul</button>
+      </div>
+      <div class="scroll" style="flex:1;padding:10px 10px 0;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="pc"><div style="position:absolute;top:8px;left:8px;background:var(--z-orange);border-radius:5px;padding:2px 6px;font-size:7px;font-weight:800;color:#fff;">10% OFF</div><span class="pc-img">🧈</span><div class="pc-name">Amul Butter 500g</div><div class="pc-wt">Dairy</div><div class="pc-row"><span><span class="pc-price">₹280</span></span><button class="add-btn">+</button></div></div>
+          <div class="pc"><span class="pc-img">🧈</span><div class="pc-name">Amul Lite Butter</div><div class="pc-wt">200g · Low fat</div><div class="pc-row"><span class="pc-price">₹125</span><button class="add-btn">+</button></div></div>
+          <div class="pc"><div style="position:absolute;top:8px;left:8px;background:var(--z-green);border-radius:5px;padding:2px 6px;font-size:7px;font-weight:800;color:#fff;">FRESH</div><span class="pc-img">🧈</span><div class="pc-name">Amul White Butter</div><div class="pc-wt">500g</div><div class="pc-row"><span class="pc-price">₹260</span><button class="add-btn">+</button></div></div>
+          <div class="pc"><span class="pc-img">🫙</span><div class="pc-name">Amul Ghee</div><div class="pc-wt">500ml</div><div class="pc-row"><span class="pc-price">₹295</span><button class="add-btn">+</button></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.4 Search Results</div>
+</div>
+
+<!-- 7.5 Empty Search -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="hh">
+        <div style="display:flex;align-items:center;gap:8px;">
+          <div class="bk">←</div>
+          <div class="sb" style="flex:1;border:1.5px solid var(--z-border);background:#fff;"><span style="font-size:14px;opacity:.4;">🔍</span><span style="font-size:11px;color:var(--z-text);font-weight:700;">xyzproduct2024</span></div>
+        </div>
+      </div>
+      <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;text-align:center;gap:12px;">
+        <div style="font-size:64px;opacity:.6;animation:floatY 3s ease-in-out infinite;">🔍</div>
+        <div style="font-size:15px;font-weight:900;color:var(--z-text);">No Results Found</div>
+        <div style="font-size:11px;color:var(--z-sub);line-height:1.6;">We couldn't find "xyzproduct2024" in this store. Try different keywords or browse categories.</div>
+        <button class="btn btn-g" style="width:180px;">Browse Categories</button>
+        <button class="btn btn-p" style="width:180px;font-size:11px;">Search All Stores</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.5 Empty Search</div>
+</div>
+
+<!-- 7.6 Category Listing -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">All Categories</span></div>
+      <div class="scroll" style="flex:1;padding:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div style="background:linear-gradient(135deg,#EBF8FF,#D0EEFF);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid #C0E0FF;">
+            <span style="font-size:38px;animation:floatY 3s ease-in-out infinite;">🥦</span>
+            <span style="font-size:12px;font-weight:800;color:var(--z-blue);">Grocery</span>
+            <span style="font-size:9px;color:var(--z-sub);">480 items</span>
+          </div>
+          <div style="background:linear-gradient(135deg,#FFF8E6,#FFF0C0);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid #FFE0A0;">
+            <span style="font-size:38px;animation:floatY 3s .5s ease-in-out infinite;">🥤</span>
+            <span style="font-size:12px;font-weight:800;color:var(--z-orange);">Beverages</span>
+            <span style="font-size:9px;color:var(--z-sub);">120 items</span>
+          </div>
+          <div style="background:linear-gradient(135deg,#FFF0F8,#FFD8F0);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid #FFB8E0;">
+            <span style="font-size:38px;animation:floatY 3s 1s ease-in-out infinite;">🍪</span>
+            <span style="font-size:12px;font-weight:800;color:#C050A0;">Snacks</span>
+            <span style="font-size:9px;color:var(--z-sub);">200 items</span>
+          </div>
+          <div style="background:linear-gradient(135deg,#F0FFF8,#C8F8E4);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid #A0F0C0;">
+            <span style="font-size:38px;animation:floatY 3s 1.5s ease-in-out infinite;">🥛</span>
+            <span style="font-size:12px;font-weight:800;color:var(--z-green);">Dairy</span>
+            <span style="font-size:9px;color:var(--z-sub);">64 items</span>
+          </div>
+          <div style="background:linear-gradient(135deg,#F5F0FF,#E8D8FF);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid #D0B8FF;">
+            <span style="font-size:38px;">🧴</span>
+            <span style="font-size:12px;font-weight:800;color:#7030D0;">Personal Care</span>
+            <span style="font-size:9px;color:var(--z-sub);">180 items</span>
+          </div>
+          <div style="background:linear-gradient(135deg,#FFF5EE,#FFDCC8);border-radius:16px;padding:16px;display:flex;flex-direction:column;align-items:center;gap:6px;border:1px solid #FFC0A0;">
+            <span style="font-size:38px;">👕</span>
+            <span style="font-size:12px;font-weight:800;color:#D06000;">Apparel</span>
+            <span style="font-size:9px;color:var(--z-sub);">320 items</span>
+          </div>
+        </div>
+      </div>
+      <div class="bnav">
+        <div class="bni"><span class="ico">🏠</span><span class="lbl">Home</span></div>
+        <div class="bni act"><span class="ico">⊞</span><span class="lbl" style="color:var(--z-blue)">Categ.</span></div>
+        <div class="bni"><div class="bnav-scan-btn"><span style="font-size:22px">📷</span></div><span class="lbl">Scan</span></div>
+        <div class="bni"><span class="ico">📦</span><span class="lbl">Orders</span></div>
+        <div class="bni"><span class="ico">👤</span><span class="lbl">Profile</span></div>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.6 Category Listing</div>
+</div>
+
+<!-- 7.7 Product Detail Page -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <!-- img area -->
+      <div style="height:190px;background:linear-gradient(180deg,#EBF4FF,#fff);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0;">
+        <span style="font-size:100px;filter:drop-shadow(0 12px 24px rgba(26,94,171,.2));">🧈</span>
+        <div style="position:absolute;top:10px;left:10px;display:flex;gap:5px;"><span class="chip cb">RFID TAGGED</span><span class="chip co">10% OFF</span></div>
+        <div class="bk" style="position:absolute;top:10px;right:50px;">←</div>
+        <div style="position:absolute;top:10px;right:10px;width:30px;height:30px;border-radius:10px;background:rgba(255,255,255,.9);display:flex;align-items:center;justify-content:center;font-size:15px;">🔗</div>
+      </div>
+      <div class="scroll" style="flex:1;padding:14px 16px;">
+        <div style="font-size:10px;font-weight:700;color:var(--z-blue);text-transform:uppercase;letter-spacing:.5px;">AMUL</div>
+        <div style="font-size:17px;font-weight:900;color:var(--z-text);line-height:1.2;margin:3px 0 6px;">Amul Pasteurised Butter</div>
+        <div style="display:flex;align-items:baseline;gap:6px;margin-bottom:10px;">
+          <span style="font-size:22px;font-weight:900;color:var(--z-text);">₹280</span>
+          <span style="font-size:13px;color:var(--z-muted);text-decoration:line-through;">₹310</span>
+          <span style="font-size:11px;font-weight:700;color:var(--z-green);">Save ₹30</span>
+        </div>
+        <div style="display:flex;gap:8px;margin-bottom:12px;">
+          <div style="display:flex;align-items:center;border:1.5px solid var(--z-border);border-radius:11px;overflow:hidden;width:90px;">
+            <button style="width:28px;height:28px;border:none;background:var(--z-blue-lt);color:var(--z-blue);font-size:16px;cursor:pointer;">−</button>
+            <span style="flex:1;text-align:center;font-size:13px;font-weight:800;color:var(--z-text);">1</span>
+            <button style="width:28px;height:28px;border:none;background:var(--z-blue-lt);color:var(--z-blue);font-size:16px;cursor:pointer;">+</button>
+          </div>
+          <span style="font-size:10px;color:var(--z-green);font-weight:700;align-self:center;">✓ In Stock · Shelf B-12</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;">
+          <div style="background:var(--z-bg);border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;">🕐</div><div style="font-size:10px;font-weight:800;color:var(--z-text);">12 mins</div><div style="font-size:8px;color:var(--z-sub);">Delivery</div></div>
+          <div style="background:var(--z-bg);border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;">⭐</div><div style="font-size:10px;font-weight:800;color:var(--z-text);">4.7</div><div style="font-size:8px;color:var(--z-sub);">Rating</div></div>
+          <div style="background:var(--z-bg);border-radius:10px;padding:8px;text-align:center;"><div style="font-size:16px;">🌡️</div><div style="font-size:10px;font-weight:800;color:var(--z-text);">Cold</div><div style="font-size:8px;color:var(--z-sub);">Stored</div></div>
+        </div>
+        <div style="font-size:11px;color:var(--z-sub);line-height:1.6;margin-bottom:8px;">Amul Pasteurised Butter made from fresh cream. Rich in vitamins A, D, E. Best for cooking &amp; baking. No artificial colors.</div>
+        <div style="background:var(--z-bg);border-radius:10px;padding:10px;"><div style="display:flex;justify-content:space-between;margin-bottom:4px;"><span style="font-size:9px;color:var(--z-sub);">HSN Code</span><span style="font-size:9px;font-weight:700;color:var(--z-text);">0405</span></div><div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:var(--z-sub);">GST Rate</span><span style="font-size:9px;font-weight:700;color:var(--z-text);">12%</span></div></div>
+      </div>
+      <div style="padding:10px 14px;background:#fff;border-top:1px solid var(--z-border);display:flex;gap:8px;flex-shrink:0;">
+        <div style="width:44px;height:44px;border-radius:12px;background:var(--z-blue-lt);display:flex;align-items:center;justify-content:center;font-size:22px;flex-shrink:0;">📷</div>
+        <button class="btn btn-p" style="padding:0;font-size:13px;">Add to Cart · ₹280</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.7 Product Detail</div>
+</div>
+
+<!-- 7.8 Flash Sale -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar" style="background:#1a0008;"><span class="t" style="color:#fff;">9:41</span><span class="ii" style="color:#ff8888;">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div style="background:linear-gradient(135deg,#C01020,#FF1A30);padding:14px 16px;text-align:center;flex-shrink:0;">
+        <div style="font-size:11px;color:rgba(255,255,255,.8);font-weight:700;text-transform:uppercase;letter-spacing:1px;">⚡ FLASH SALE ENDS IN</div>
+        <div style="display:flex;justify-content:center;gap:8px;margin-top:6px;">
+          <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:6px 10px;"><div style="font-size:22px;font-weight:900;color:#fff;line-height:1;">01</div><div style="font-size:8px;color:rgba(255,255,255,.6);">HRS</div></div>
+          <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.5;">:</div>
+          <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:6px 10px;"><div style="font-size:22px;font-weight:900;color:#fff;line-height:1;">24</div><div style="font-size:8px;color:rgba(255,255,255,.6);">MIN</div></div>
+          <div style="font-size:22px;font-weight:900;color:#fff;line-height:1.5;">:</div>
+          <div style="background:rgba(0,0,0,.3);border-radius:8px;padding:6px 10px;"><div style="font-size:22px;font-weight:900;color:#fff;line-height:1;animation:blink .5s infinite;">38</div><div style="font-size:8px;color:rgba(255,255,255,.6);">SEC</div></div>
+        </div>
+      </div>
+      <div class="scroll" style="flex:1;padding:12px;">
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;">
+          <div class="pc" style="border:2px solid #FF1A30;"><div style="position:absolute;top:8px;left:8px;background:#FF1A30;border-radius:5px;padding:2px 6px;font-size:7px;font-weight:800;color:#fff;">50% OFF</div><span class="pc-img">🥤</span><div class="pc-name">Red Bull 250ml</div><div style="font-size:9px;color:var(--z-sub);">₹75 <s>₹150</s></div><div class="pc-row"><span class="pc-price">₹75</span><button class="add-btn" style="background:#FF1A30;">+</button></div></div>
+          <div class="pc" style="border:2px solid #FF1A30;"><div style="position:absolute;top:8px;left:8px;background:#FF1A30;border-radius:5px;padding:2px 6px;font-size:7px;font-weight:800;color:#fff;">40% OFF</div><span class="pc-img">🍫</span><div class="pc-name">Dairy Milk 100g</div><div style="font-size:9px;color:var(--z-sub);">₹48 <s>₹80</s></div><div class="pc-row"><span class="pc-price">₹48</span><button class="add-btn" style="background:#FF1A30;">+</button></div></div>
+          <div class="pc"><span class="pc-img">🥜</span><div class="pc-name">Peanut Butter</div><div class="pc-wt">Sold Out</div><div class="pc-row"><span class="pc-price" style="color:var(--z-muted);">₹220</span><button class="add-btn" style="background:var(--z-muted);cursor:not-allowed;">✗</button></div></div>
+          <div class="pc"><span class="pc-img">🧃</span><div class="pc-name">Real Mango 1L</div><div class="pc-wt">2 left!</div><div class="pc-row"><span class="pc-price" style="color:#FF1A30;">₹85</span><button class="add-btn" style="background:#FF1A30;">+</button></div></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.8 Flash Sale</div>
+</div>
+
+<!-- 7.9 Combo Builder -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">Combo Builder 🎯</span></div>
+      <div class="scroll" style="flex:1;padding:12px;">
+        <div style="background:linear-gradient(135deg,var(--z-orange-lt),#FFE0B0);border-radius:16px;padding:14px;margin-bottom:12px;text-align:center;">
+          <div style="font-size:22px;margin-bottom:4px;">🎁</div>
+          <div style="font-size:13px;font-weight:900;color:var(--z-text);">Build Your Breakfast Combo</div>
+          <div style="font-size:10px;color:var(--z-sub);margin-top:2px;">Save up to 20% when bought together</div>
+        </div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:12px;">
+          <div style="background:#fff;border-radius:12px;border:2px solid var(--z-green);padding:10px 12px;display:flex;gap:10px;align-items:center;"><span style="font-size:28px;">🥛</span><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:var(--z-text);">Amul Taza Milk 1L</div><div style="font-size:9px;color:var(--z-sub);">₹62</div></div><span class="chip cg">✓ Added</span></div>
+          <div style="background:#fff;border-radius:12px;border:2px solid var(--z-green);padding:10px 12px;display:flex;gap:10px;align-items:center;"><span style="font-size:28px;">🍞</span><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:var(--z-text);">Britannia Bread</div><div style="font-size:9px;color:var(--z-sub);">₹45</div></div><span class="chip cg">✓ Added</span></div>
+          <div style="background:#fff;border-radius:12px;border:2px dashed var(--z-border);padding:10px 12px;display:flex;gap:10px;align-items:center;"><span style="font-size:28px;opacity:.4;">🥚</span><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:var(--z-text);">Eggs 6-pack</div><div style="font-size:9px;color:var(--z-sub);">₹78</div></div><button style="background:var(--z-blue-lt);border:none;border-radius:8px;padding:5px 10px;font-size:10px;font-weight:700;color:var(--z-blue);cursor:pointer;">+ Add</button></div>
+        </div>
+        <div style="background:var(--z-bg);border-radius:12px;padding:12px;margin-bottom:10px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;color:var(--z-sub);">Individual total</span><span style="font-size:11px;font-weight:700;text-decoration:line-through;color:var(--z-muted);">₹185</span></div>
+          <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;font-weight:800;color:var(--z-green);">Combo price (Save 15%)</span><span style="font-size:13px;font-weight:900;color:var(--z-green);">₹157</span></div>
+        </div>
+        <button class="btn btn-orange">Add Combo to Cart 🎁</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.9 Combo Builder</div>
+</div>
+
+<!-- 7.10 Store Layout Map -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">Store Map 🗺️</span></div>
+      <div style="flex:1;background:linear-gradient(135deg,#D0E8F0,#B8D4E8);position:relative;overflow:hidden;">
+        <div style="position:absolute;inset:0;background-image:linear-gradient(rgba(255,255,255,.3) 1px,transparent 1px),linear-gradient(90deg,rgba(255,255,255,.3) 1px,transparent 1px);background-size:20px 20px;"></div>
+        <div style="position:absolute;width:56px;height:28px;background:rgba(26,94,171,.15);border:1px solid rgba(26,94,171,.3);border-radius:4px;top:18px;left:12px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--z-blue);">Grocery</div>
+        <div style="position:absolute;width:56px;height:28px;background:rgba(26,94,171,.15);border:1px solid rgba(26,94,171,.3);border-radius:4px;top:18px;left:76px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--z-blue);">Dairy</div>
+        <div style="position:absolute;width:56px;height:28px;background:rgba(26,94,171,.15);border:1px solid rgba(26,94,171,.3);border-radius:4px;top:18px;left:140px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--z-blue);">Bakery</div>
+        <div style="position:absolute;width:56px;height:28px;background:rgba(26,94,171,.15);border:1px solid rgba(26,94,171,.3);border-radius:4px;top:64px;left:12px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--z-blue);">Snacks</div>
+        <div style="position:absolute;width:56px;height:28px;background:rgba(26,94,171,.15);border:1px solid rgba(26,94,171,.3);border-radius:4px;top:64px;left:76px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--z-blue);">Drinks</div>
+        <div style="position:absolute;width:80px;height:24px;background:rgba(0,196,122,.15);border:1px solid rgba(0,196,122,.4);border-radius:4px;bottom:10px;right:10px;display:flex;align-items:center;justify-content:center;font-size:8px;font-weight:700;color:var(--z-green);">🚪 Exit Gate</div>
+        <div style="position:absolute;width:24px;height:24px;background:var(--z-blue);border-radius:50%;border:3px solid #fff;box-shadow:0 2px 8px rgba(0,0,0,.3);top:55%;left:48%;"></div>
+        <div style="position:absolute;top:57%;left:50%;transform:translateX(-50%);background:rgba(26,94,171,.9);border-radius:8px;padding:3px 8px;white-space:nowrap;"><span style="font-size:8px;font-weight:700;color:#fff;">📍 You are here</span></div>
+      </div>
+      <div style="background:#fff;padding:10px 14px;border-top:1px solid var(--z-border);">
+        <div style="display:flex;gap:6px;overflow-x:auto;scrollbar-width:none;padding-bottom:2px;">
+          <div style="flex-shrink:0;background:var(--z-blue-lt);border-radius:20px;padding:5px 10px;display:flex;gap:4px;align-items:center;"><span style="font-size:12px;">🧈</span><span style="font-size:9px;font-weight:700;color:var(--z-blue);">Butter · B3</span></div>
+          <div style="flex-shrink:0;background:#E6FFF4;border-radius:20px;padding:5px 10px;display:flex;gap:4px;align-items:center;"><span style="font-size:12px;">🚪</span><span style="font-size:9px;font-weight:700;color:var(--z-green);">Exit Gate</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.10 Store Map</div>
+</div>
+
+<!-- 7.11 Voice Search -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="background:#fff;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:24px;gap:16px;text-align:center;">
+      <div style="font-size:16px;font-weight:900;color:var(--z-text);">🎤 Listening…</div>
+      <div style="width:90px;height:90px;border-radius:50%;background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));display:flex;align-items:center;justify-content:center;position:relative;box-shadow:0 8px 24px rgba(26,94,171,.4);">
+        <div style="position:absolute;inset:-8px;border-radius:50%;border:2px solid rgba(26,94,171,.3);animation:pulseR 1.5s ease-out infinite;"></div>
+        <div style="position:absolute;inset:-16px;border-radius:50%;border:2px solid rgba(26,94,171,.15);animation:pulseR 1.5s .5s ease-out infinite;"></div>
+        <style>@keyframes pulseR{0%{transform:scale(.9);opacity:.8}100%{transform:scale(1.3);opacity:0}}</style>
+        <span style="font-size:36px;color:#fff;">🎤</span>
+      </div>
+      <div style="background:var(--z-blue-lt);border-radius:12px;padding:10px 16px;font-size:13px;font-weight:700;color:var(--z-blue);">"Amul butter 500 gram…"</div>
+      <div style="font-size:10px;color:var(--z-muted);">Speak clearly · Hindi &amp; English supported</div>
+      <button class="btn btn-red" style="width:160px;font-size:12px;">✕ Cancel</button>
+    </div>
+  </div>
+  <div class="label">7.11 Voice Search</div>
+</div>
+
+<!-- 7.12 Recipe-to-Cart -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">Recipe-to-Cart 🍳</span></div>
+      <div class="scroll" style="flex:1;padding:12px;">
+        <div style="background:linear-gradient(135deg,#FFF5EE,#FFE8D5);border-radius:16px;padding:14px;margin-bottom:12px;display:flex;gap:12px;align-items:center;">
+          <span style="font-size:44px;animation:floatY 3s ease-in-out infinite;">🥘</span>
+          <div><div style="font-size:14px;font-weight:900;color:var(--z-text);">Butter Chicken</div><div style="font-size:10px;color:var(--z-sub);">8 ingredients · All available in store</div><div class="chip co" style="margin-top:4px;">Serves 4</div></div>
+        </div>
+        <div style="font-size:11px;font-weight:800;color:var(--z-text);margin-bottom:8px;">Ingredients</div>
+        <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px;">
+          <div style="background:#fff;border-radius:12px;border:1px solid var(--z-border);padding:10px 12px;display:flex;gap:10px;align-items:center;"><span style="font-size:22px;">🍗</span><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:var(--z-text);">Chicken 500g · Shelf M2</div><div style="font-size:9px;color:var(--z-sub);">₹180</div></div><span class="chip cg">In Stock</span></div>
+          <div style="background:#fff;border-radius:12px;border:1px solid var(--z-border);padding:10px 12px;display:flex;gap:10px;align-items:center;"><span style="font-size:22px;">🧅</span><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:var(--z-text);">Onions 500g · Shelf V1</div><div style="font-size:9px;color:var(--z-sub);">₹30</div></div><span class="chip cg">In Stock</span></div>
+          <div style="background:#fff;border-radius:12px;border:1px solid var(--z-border);padding:10px 12px;display:flex;gap:10px;align-items:center;"><span style="font-size:22px;">🍅</span><div style="flex:1;"><div style="font-size:11px;font-weight:700;color:var(--z-text);">Tomato Puree · Shelf G3</div><div style="font-size:9px;color:var(--z-sub);">₹45</div></div><span class="chip cg">In Stock</span></div>
+        </div>
+        <button class="btn btn-orange">Add All 8 Items to Cart</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">7.12 Recipe-to-Cart</div>
+</div>
+
+</div><!-- end home grid -->
+
+<!-- ═══════════════ SECTION 8: SCAN ENGINE ═══════════════ -->
+<h2 class="st">⑧ Scan Engine</h2>
+<div class="grid">
+
+<!-- 8.1 Scan Mode -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar wh" style="background:transparent;position:absolute;top:0;width:100%;z-index:10;padding:8px 22px 0;display:flex;justify-content:space-between;">
+      <span style="font-size:11px;font-weight:800;color:#fff;">9:41</span><span style="font-size:9px;color:rgba(255,255,255,.5);">●●●</span>
+    </div>
+    <div class="scr">
+      <div style="background:#000;height:100%;display:flex;flex-direction:column;">
+        <div style="flex:1;background:linear-gradient(180deg,#111,#1a1a2e);display:flex;align-items:center;justify-content:center;position:relative;">
+          <!-- top controls -->
+          <div style="position:absolute;top:44px;left:0;right:0;display:flex;justify-content:space-between;padding:0 16px;">
+            <div style="width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;color:#fff;">←</div>
+            <div style="background:rgba(0,0,0,.5);border-radius:20px;padding:5px 12px;"><span style="font-size:10px;color:#fff;font-weight:700;">📷 Scan &amp; Go Mode</span></div>
+            <div style="width:32px;height:32px;background:rgba(255,255,255,.15);border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:16px;">💡</div>
+          </div>
+          <!-- scan frame -->
+          <div class="scan-frame">
+            <div class="sf-c sf-tl"></div><div class="sf-c sf-tr"></div>
+            <div class="sf-c sf-bl"></div><div class="sf-c sf-br"></div>
+            <div class="sline"></div>
+          </div>
+          <div style="position:absolute;bottom:12px;"><span style="font-size:10px;color:rgba(255,255,255,.6);font-weight:600;">Point at barcode to scan</span></div>
+        </div>
+        <div style="background:#1a1a2e;padding:12px 14px;">
+          <div style="font-size:9px;font-weight:700;color:#8888aa;text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">3 items in cart · ₹387</div>
+          <div style="display:flex;align-items:center;gap:10px;background:rgba(255,255,255,.06);border-radius:12px;padding:10px 12px;margin-bottom:8px;">
+            <span style="font-size:26px;">🧈</span>
+            <div style="flex:1;"><div style="font-size:11px;font-weight:700;color:#fff;">Amul Butter 500g</div><div style="font-size:9px;color:#8888aa;">Just added ✓</div></div>
+            <span style="font-size:20px;">✅</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;align-items:center;">
+            <span style="font-size:11px;color:#8888aa;">3 items scanned</span>
+            <button style="background:var(--z-green);border:none;border-radius:10px;padding:8px 16px;font-family:var(--ff);font-weight:800;font-size:12px;color:#fff;cursor:pointer;">Pay Now →</button>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">8.1 Scan Mode</div>
+</div>
+
+<!-- 8.2 Scan Success Animation -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar wh" style="background:transparent;position:absolute;top:0;width:100%;z-index:10;padding:8px 22px 0;display:flex;justify-content:space-between;">
+      <span style="font-size:11px;font-weight:800;color:#fff;">9:41</span><span style="font-size:9px;color:rgba(255,255,255,.5);">●●●</span>
+    </div>
+    <div class="scr">
+      <div style="background:#000;height:100%;display:flex;flex-direction:column;">
+        <div style="flex:1;background:linear-gradient(180deg,#050F05,#0A200A);display:flex;align-items:center;justify-content:center;position:relative;">
+          <!-- success animation overlay -->
+          <div style="position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:16px;">
+            <div style="width:80px;height:80px;border-radius:50%;background:linear-gradient(135deg,var(--z-green),#00A060);display:flex;align-items:center;justify-content:center;box-shadow:0 0 0 20px rgba(0,196,122,.15),0 0 0 40px rgba(0,196,122,.05);animation:successPulse .5s ease;"><span style="font-size:36px;color:#fff;">✓</span></div>
+            <div style="background:rgba(0,0,0,.7);border-radius:14px;padding:12px 20px;text-align:center;">
+              <div style="font-size:14px;font-weight:900;color:#fff;">Item Added! ✅</div>
+              <div style="font-size:11px;color:rgba(255,255,255,.7);margin-top:3px;">Amul Butter 500g · ₹280</div>
+            </div>
+          </div>
+          <!-- scan frame green -->
+          <div class="scan-frame" style="opacity:.3;">
+            <div class="sf-c sf-tl" style="border-color:var(--z-green);"></div><div class="sf-c sf-tr" style="border-color:var(--z-green);"></div>
+            <div class="sf-c sf-bl" style="border-color:var(--z-green);"></div><div class="sf-c sf-br" style="border-color:var(--z-green);"></div>
+          </div>
+        </div>
+        <div style="background:#0A200A;padding:12px 14px;">
+          <div style="display:flex;align-items:center;justify-content:space-between;"><span style="font-size:11px;color:#88FF88;font-weight:700;">4 items · ₹667</span><button style="background:var(--z-green);border:none;border-radius:10px;padding:7px 14px;font-family:var(--ff);font-weight:800;font-size:11px;color:#fff;cursor:pointer;">Continue Scanning</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">8.2 Scan Success</div>
+</div>
+
+<!-- 8.3 Duplicate Scan Warning -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar wh" style="background:transparent;position:absolute;top:0;width:100%;z-index:10;padding:8px 22px 0;display:flex;justify-content:space-between;">
+      <span style="font-size:11px;font-weight:800;color:#fff;">9:41</span><span style="font-size:9px;color:rgba(255,255,255,.5);">●●●</span>
+    </div>
+    <div class="scr">
+      <div style="background:#000;height:100%;display:flex;flex-direction:column;">
+        <div style="flex:1;background:linear-gradient(180deg,#111,#1a1a2e);display:flex;align-items:center;justify-content:center;position:relative;">
+          <div class="scan-frame" style="border-color:var(--z-yellow);">
+            <div class="sf-c sf-tl" style="border-color:var(--z-yellow);"></div><div class="sf-c sf-tr" style="border-color:var(--z-yellow);"></div>
+            <div class="sf-c sf-bl" style="border-color:var(--z-yellow);"></div><div class="sf-c sf-br" style="border-color:var(--z-yellow);"></div>
+          </div>
+          <!-- warning card -->
+          <div style="position:absolute;bottom:10px;left:14px;right:14px;background:rgba(255,184,0,.95);border-radius:14px;padding:12px 14px;">
+            <div style="font-size:12px;font-weight:900;color:#1a0a00;margin-bottom:4px;">⚠️ Already in Cart!</div>
+            <div style="font-size:10px;color:rgba(0,0,0,.7);">Lay's Classic is already in your cart (×2). Add another?</div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button style="flex:1;background:rgba(0,0,0,.2);border:none;border-radius:8px;padding:7px;font-family:var(--ff);font-size:10px;font-weight:700;color:#fff;cursor:pointer;">Skip</button>
+              <button style="flex:1;background:#1a5eab;border:none;border-radius:8px;padding:7px;font-family:var(--ff);font-size:10px;font-weight:800;color:#fff;cursor:pointer;">+ Add Another</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">8.3 Duplicate Scan</div>
+</div>
+
+<!-- 8.4 Barcode Unreadable -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar wh" style="background:transparent;position:absolute;top:0;width:100%;z-index:10;padding:8px 22px 0;display:flex;justify-content:space-between;">
+      <span style="font-size:11px;font-weight:800;color:#fff;">9:41</span><span style="font-size:9px;color:rgba(255,255,255,.5);">●●●</span>
+    </div>
+    <div class="scr">
+      <div style="background:#000;height:100%;display:flex;flex-direction:column;">
+        <div style="flex:1;background:linear-gradient(180deg,#111,#1a1a2e);display:flex;align-items:center;justify-content:center;position:relative;">
+          <div class="scan-frame" style="opacity:.4;">
+            <div class="sf-c sf-tl" style="border-color:var(--z-red);"></div><div class="sf-c sf-tr" style="border-color:var(--z-red);"></div>
+            <div class="sf-c sf-bl" style="border-color:var(--z-red);"></div><div class="sf-c sf-br" style="border-color:var(--z-red);"></div>
+          </div>
+          <div style="position:absolute;bottom:10px;left:14px;right:14px;background:rgba(255,59,59,.95);border-radius:14px;padding:12px 14px;">
+            <div style="font-size:12px;font-weight:900;color:#fff;margin-bottom:4px;">❌ Barcode Unreadable</div>
+            <div style="font-size:10px;color:rgba(255,255,255,.8);">The barcode is damaged or unclear. Try moving closer or use the flashlight.</div>
+            <div style="display:flex;gap:8px;margin-top:8px;">
+              <button style="flex:1;background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:7px;font-family:var(--ff);font-size:10px;font-weight:700;color:#fff;cursor:pointer;">💡 Flashlight</button>
+              <button style="flex:1;background:#fff;border:none;border-radius:8px;padding:7px;font-family:var(--ff);font-size:10px;font-weight:800;color:var(--z-red);cursor:pointer;">Enter SKU</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">8.4 Unreadable Barcode</div>
+</div>
+
+<!-- 8.5 Low Light / Blur -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar wh" style="background:transparent;position:absolute;top:0;width:100%;z-index:10;padding:8px 22px 0;display:flex;justify-content:space-between;">
+      <span style="font-size:11px;font-weight:800;color:#fff;">9:41</span><span style="font-size:9px;color:rgba(255,255,255,.5);">●●●</span>
+    </div>
+    <div class="scr">
+      <div style="background:#000;height:100%;display:flex;flex-direction:column;">
+        <div style="flex:1;background:#050508;display:flex;align-items:center;justify-content:center;position:relative;">
+          <div class="scan-frame" style="opacity:.5;">
+            <div class="sf-c sf-tl" style="border-color:var(--z-yellow);"></div><div class="sf-c sf-tr" style="border-color:var(--z-yellow);"></div>
+            <div class="sf-c sf-bl" style="border-color:var(--z-yellow);"></div><div class="sf-c sf-br" style="border-color:var(--z-yellow);"></div>
+          </div>
+          <div style="position:absolute;bottom:10px;left:14px;right:14px;background:rgba(255,184,0,.95);border-radius:14px;padding:12px 14px;">
+            <div style="font-size:12px;font-weight:900;color:#1a0a00;">🔆 Low Light Detected</div>
+            <div style="font-size:10px;color:rgba(0,0,0,.7);margin-top:3px;">Torch has been turned on for better scanning.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">8.5 Low Light</div>
+</div>
+
+</div><!-- end scan grid -->
+
+<!-- ═══════════════ SECTION 9: CART ENGINE ═══════════════ -->
+<h2 class="st">⑨ Cart Engine</h2>
+<div class="grid">
+
+<!-- 9.1 Cart Overview -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">My Cart (4 items)</span><span style="font-size:11px;font-weight:700;color:var(--z-blue);margin-left:auto;">Clear</span></div>
+      <div class="scroll" style="flex:1;padding:10px 12px;">
+        <div class="ci"><span class="ci-img">🧈</span><div class="ci-body"><div class="ci-name">Amul Butter 500g</div><div class="ci-wt">Dairy · RFID ✓</div><div class="ci-price">₹280</div></div><div class="qty"><button>−</button><span>1</span><button>+</button></div></div>
+        <div class="ci"><span class="ci-img">🥔</span><div class="ci-body"><div class="ci-name">Lay's Classic 150g</div><div class="ci-wt">Snacks · Scanned ✓</div><div class="ci-price">₹90</div></div><div class="qty"><button>−</button><span>2</span><button>+</button></div></div>
+        <div class="ci"><span class="ci-img">🍵</span><div class="ci-body"><div class="ci-name">Tata Tea Gold 250g</div><div class="ci-wt">Grocery · Scanned ✓</div><div class="ci-price">₹195</div></div><div class="qty"><button>−</button><span>1</span><button>+</button></div></div>
+        <!-- promo row -->
+        <div style="background:linear-gradient(135deg,var(--z-orange-lt),#FFE8D0);border-radius:14px;padding:10px 12px;display:flex;gap:8px;align-items:center;margin-bottom:10px;">
+          <span style="font-size:20px;">🎟️</span>
+          <div style="flex:1;"><div style="font-size:11px;font-weight:700;color:var(--z-text);">Apply Coupon / Loyalty</div><div style="font-size:9px;color:var(--z-sub);">340 Zippy Points available</div></div>
+          <span style="font-size:12px;color:var(--z-orange);font-weight:800;">→</span>
+        </div>
+        <!-- summary -->
+        <div style="background:#fff;border-radius:14px;border:1px solid var(--z-border);padding:13px 14px;margin-bottom:8px;">
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;color:var(--z-sub);">Subtotal</span><span style="font-size:11px;font-weight:700;color:var(--z-text);">₹565</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;color:var(--z-sub);">GST (blended)</span><span style="font-size:11px;font-weight:700;color:var(--z-text);">₹48.20</span></div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:6px;"><span style="font-size:11px;color:var(--z-sub);">Offer Discount</span><span style="font-size:11px;font-weight:700;color:var(--z-green);">−₹56</span></div>
+          <hr style="border:none;border-top:1px dashed var(--z-border);margin:8px 0;">
+          <div style="display:flex;justify-content:space-between;"><span style="font-size:13px;font-weight:900;color:var(--z-text);">Total</span><span style="font-size:13px;font-weight:900;color:var(--z-blue);">₹557.20</span></div>
+        </div>
+        <div style="background:#F0FFF8;border-radius:12px;border:1px solid #B3F0D5;padding:10px 12px;margin-bottom:8px;display:flex;gap:8px;align-items:center;">
+          <span>✅</span><span style="font-size:10px;color:var(--z-green);font-weight:600;">All items validated · Exit gate pre-authorized</span>
+        </div>
+      </div>
+      <div style="padding:10px 12px;background:#fff;border-top:1px solid var(--z-border);flex-shrink:0;">
+        <div class="co-bar"><div class="co-l"><div class="cl">Total Payable</div><div class="ca">₹557.20</div></div><div class="co-btn"><span>Proceed to Pay →</span></div></div>
+      </div>
+    </div>
+  </div>
+  <div class="label">9.1 Cart Overview</div>
+</div>
+
+<!-- 9.2 Remove Item Confirmation -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="position:relative;display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">My Cart</span></div>
+      <div style="padding:10px 12px;flex:1;opacity:.4;">
+        <div class="ci"><span class="ci-img">🧈</span><div class="ci-body"><div class="ci-name">Amul Butter 500g</div></div></div>
+        <div class="ci" style="border-color:var(--z-red);background:#FFF8F8;"><span class="ci-img">🥔</span><div class="ci-body"><div class="ci-name">Lay's Classic 150g</div></div></div>
+      </div>
+      <!-- sheet -->
+      <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:22px 22px 0 0;padding:20px;box-shadow:0 -8px 40px rgba(0,0,0,.2);">
+        <div style="width:36px;height:4px;border-radius:2px;background:var(--z-border);margin:0 auto 16px;"></div>
+        <div style="font-size:15px;font-weight:900;color:var(--z-text);margin-bottom:6px;">Remove Item?</div>
+        <div style="font-size:11px;color:var(--z-sub);margin-bottom:14px;">Remove Lay's Classic 150g from your cart?</div>
+        <div style="display:flex;gap:8px;align-items:center;background:var(--z-bg);border-radius:12px;padding:10px;margin-bottom:14px;">
+          <span style="font-size:28px;">🥔</span><div><div style="font-size:12px;font-weight:700;color:var(--z-text);">Lay's Classic 150g · ×2</div><div style="font-size:10px;color:var(--z-sub);">₹90 will be removed</div></div>
+        </div>
+        <button class="btn btn-red" style="margin-bottom:8px;">Yes, Remove</button>
+        <button class="btn btn-g">Keep in Cart</button>
+      </div>
+    </div>
+  </div>
+  <div class="label">9.2 Remove Item</div>
+</div>
+
+<!-- 9.3 Coupon Apply -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">Apply Coupon 🎟️</span></div>
+      <div class="scroll" style="flex:1;padding:12px;">
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <div style="flex:1;border:1.5px solid var(--z-blue);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:700;color:var(--z-text);background:#fff;">ZIPPYRA20</div>
+          <button class="btn btn-p" style="width:70px;padding:10px;font-size:12px;">Apply</button>
+        </div>
+        <div style="font-size:10px;font-weight:800;color:var(--z-muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px;">Available Coupons</div>
+        <div style="display:flex;flex-direction:column;gap:8px;">
+          <div style="background:#fff;border-radius:14px;border:2px solid var(--z-blue);padding:12px 14px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;"><div class="chip cb">ZIPPYRA20</div><button style="background:var(--z-blue);border:none;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:800;color:#fff;cursor:pointer;">Apply</button></div>
+            <div style="font-size:11px;font-weight:700;color:var(--z-text);">20% off · Max ₹100</div>
+            <div style="font-size:9px;color:var(--z-sub);">On orders above ₹500 · Expires today</div>
+          </div>
+          <div style="background:#fff;border-radius:14px;border:1px solid var(--z-border);padding:12px 14px;">
+            <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:4px;"><div class="chip co">FIRSTSCAN</div><button style="background:var(--z-blue-lt);border:none;border-radius:8px;padding:4px 10px;font-size:10px;font-weight:800;color:var(--z-blue);cursor:pointer;">Apply</button></div>
+            <div style="font-size:11px;font-weight:700;color:var(--z-text);">₹50 off first Scan &amp; Go</div>
+            <div style="font-size:9px;color:var(--z-sub);">New users only</div>
+          </div>
+        </div>
+        <div style="margin-top:14px;background:#F0FFF8;border-radius:14px;border:1px solid #B3F0D5;padding:12px;">
+          <div style="font-size:11px;font-weight:800;color:var(--z-green);margin-bottom:6px;">⭐ Zippy Points</div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:8px;"><span style="font-size:10px;color:var(--z-sub);">Available</span><span style="font-size:10px;font-weight:700;color:var(--z-text);">340 pts = ₹34</span></div>
+          <div style="display:flex;align-items:center;justify-content:space-between;">
+            <span style="font-size:10px;color:var(--z-sub);">Use all points</span>
+            <div style="width:36px;height:20px;border-radius:10px;background:var(--z-green);position:relative;"><div style="position:absolute;right:2px;top:2px;width:16px;height:16px;border-radius:50%;background:#fff;"></div></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">9.3 Coupon Apply</div>
+</div>
+
+<!-- 9.4 Coupon Invalid -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">Apply Coupon</span></div>
+      <div style="padding:14px 12px;flex:1;">
+        <div style="display:flex;gap:8px;margin-bottom:14px;">
+          <div style="flex:1;border:1.5px solid var(--z-red);border-radius:12px;padding:10px 14px;font-size:12px;font-weight:700;color:var(--z-red);background:#FFF8F8;">BADCODE99</div>
+          <button class="btn btn-red" style="width:70px;padding:10px;font-size:12px;">Apply</button>
+        </div>
+        <div style="background:#FFF0F0;border-radius:12px;padding:12px;display:flex;gap:8px;align-items:flex-start;">
+          <span style="font-size:20px;">❌</span>
+          <div>
+            <div style="font-size:12px;font-weight:800;color:var(--z-red);">Coupon Invalid</div>
+            <div style="font-size:10px;color:var(--z-sub);line-height:1.5;margin-top:3px;">"BADCODE99" is either expired, invalid, or not applicable to items in your cart.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">9.4 Coupon Invalid</div>
+</div>
+
+<!-- 9.5 Price Changed Alert -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="position:relative;display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">My Cart</span></div>
+      <div style="padding:10px 12px;flex:1;">
+        <div class="ci" style="border-color:var(--z-yellow);background:#FFFCF0;">
+          <span class="ci-img">🧈</span>
+          <div class="ci-body">
+            <div class="ci-name">Amul Butter 500g</div>
+            <div style="display:flex;gap:6px;align-items:center;margin-top:3px;">
+              <span style="font-size:12px;font-weight:800;color:var(--z-text);">₹285</span>
+              <span style="font-size:9px;color:var(--z-muted);text-decoration:line-through;">₹280</span>
+              <span class="chip cy" style="font-size:8px;">Price Updated</span>
+            </div>
+          </div>
+        </div>
+      </div>
+      <!-- alert -->
+      <div style="position:absolute;top:56px;left:12px;right:12px;background:#FFF8E6;border:1.5px solid var(--z-yellow);border-radius:14px;padding:12px 14px;z-index:10;box-shadow:0 4px 20px rgba(0,0,0,.1);">
+        <div style="font-size:12px;font-weight:900;color:var(--z-text);margin-bottom:4px;">⚡ Price Updated!</div>
+        <div style="font-size:10px;color:var(--z-sub);">Amul Butter price changed from ₹280 to ₹285. Cart total updated.</div>
+        <div style="display:flex;gap:8px;margin-top:8px;">
+          <button style="flex:1;background:var(--z-yellow);border:none;border-radius:8px;padding:7px;font-family:var(--ff);font-size:10px;font-weight:800;color:#fff;cursor:pointer;">OK, Understood</button>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">9.5 Price Changed Alert</div>
+</div>
+
+<!-- 9.6 GST Breakdown -->
+<div class="frame">
+  <div class="phone">
+    <div class="notch"></div>
+    <div class="sbar"><span class="t">9:41</span><span class="ii">●●●</span></div>
+    <div class="scr" style="display:flex;flex-direction:column;">
+      <div class="ihdr"><div class="bk">←</div><span class="pg">GST Breakdown 📊</span></div>
+      <div class="scroll" style="flex:1;padding:12px;">
+        <div style="background:linear-gradient(135deg,var(--z-blue),var(--z-blue-dk));border-radius:16px;padding:14px;margin-bottom:12px;text-align:center;">
+          <div style="font-size:10px;color:rgba(255,255,255,.7);">Total Tax Payable</div>
+          <div style="font-size:26px;font-weight:900;color:#fff;margin:4px 0;">₹48.20</div>
+          <div style="font-size:9px;color:rgba(255,255,255,.6);">CGST ₹24.10 + SGST ₹24.10</div>
+        </div>
+        <div style="background:#fff;border-radius:14px;border:1px solid var(--z-border);overflow:hidden;">
+          <div style="padding:10px 14px;border-bottom:1px solid var(--z-border);display:flex;justify-content:space-between;align-items:center;background:var(--z-bg);">
+            <span style="font-size:10px;font-weight:800;color:var(--z-sub);">Product</span>
+            <span style="font-size:10px;font-weight:800;color:var(--z-sub);">HSN · Rate · Tax</span>
+          </div>
+          <div style="padding:10px 14px;border-bottom:1px solid var(--z-border);">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="display:flex;gap:6px;align-items:center;"><span style="font-size:16px;">🧈</span><span style="font-size:10px;font-weight:700;color:var(--z-text);">Amul Butter</span></div><div style="text-align:right;"><div style="font-size:9px;color:var(--z-sub);">0405 · 12%</div><div style="font-size:10px;font-weight:800;color:var(--z-text);">₹30.00</div></div></div>
+            <div style="display:flex;gap:12px;"><div style="flex:1;background:var(--z-bg);border-radius:6px;padding:5px;text-align:center;"><div style="font-size:9px;color:var(--z-sub);">CGST 6%</div><div style="font-size:10px;font-weight:700;color:var(--z-text);">₹15.00</div></div><div style="flex:1;background:var(--z-bg);border-radius:6px;padding:5px;text-align:center;"><div style="font-size:9px;color:var(--z-sub);">SGST 6%</div><div style="font-size:10px;font-weight:700;color:var(--z-text);">₹15.00</div></div></div>
+          </div>
+          <div style="padding:10px 14px;">
+            <div style="display:flex;justify-content:space-between;margin-bottom:4px;"><div style="display:flex;gap:6px;align-items:center;"><span style="font-size:16px;">🥔</span><span style="font-size:10px;font-weight:700;color:var(--z-text);">Lay's × 2</span></div><div style="text-align:right;"><div style="font-size:9px;color:var(--z-sub);">2106 · 12%</div><div style="font-size:10px;font-weight:800;color:var(--z-text);">₹9.60</div></div></div>
+          </div>
+        </div>
+        <div style="background:#F0FFF8;border-radius:12px;padding:10px 14px;margin-top:10px;display:flex;gap:8px;align-items:center;">
+          <span>📄</span><span style="font-size:10px;color:var(--z-green);font-weight:600;">GST-compliant invoice will be sent via WhatsApp &amp; downloadable as PDF</span>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div class="label">9.6 GST Breakdown</div>
+</div>
+
+</div><!-- end cart grid -->
+
+<div style="margin-top:48px;color:#333;font-size:11px;text-align:center;font-weight:600;">
+  <a href="part1.html" style="color:#888;font-weight:800;text-decoration:none;">← Part 1: Init–Store</a>
+  <span style="margin:0 12px;">·</span>
+  <span style="color:var(--z-orange);font-weight:800;">Part 2: Home · Scan · Cart</span>
+  <span style="margin:0 12px;">·</span>
+  <a href="part3.html" style="color:var(--z-orange);font-weight:800;text-decoration:none;">Part 3: Payment · Exit → </a>
+</div>
+</body>
+</html>

@@ -1,0 +1,947 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Zippyra — Part 3: Payment · Exit · Account</title>
+<link href="https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+:root{
+  --blue:#1A5EAB;--blue-dk:#0E3D7A;--blue-lt:#E8F1FB;
+  --orange:#F7941D;--orange-lt:#FFF3E0;
+  --green:#00C47A;--red:#FF3B3B;--yellow:#FFB800;
+  --bg:#F4F5FA;--card:#FFF;--border:#ECEDF2;
+  --text:#0D0D1A;--sub:#6B6B8A;--muted:#B0B0C8;
+  --ff:'Plus Jakarta Sans',sans-serif;
+}
+body{background:#0E0E1C;font-family:var(--ff);padding:28px 20px;display:flex;flex-direction:column;align-items:center;}
+
+/* ── Layout ── */
+h2.s{color:rgba(255,255,255,.35);font-size:11px;font-weight:800;letter-spacing:3px;text-transform:uppercase;margin:36px 0 18px;width:100%;max-width:1800px;}
+.g{display:flex;flex-wrap:wrap;gap:18px;justify-content:flex-start;max-width:1800px;width:100%;}
+.f{display:flex;flex-direction:column;align-items:center;gap:7px;}
+.lbl{color:#444;font-size:8px;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;text-align:center;max-width:130px;}
+
+/* ── Phone Shell ── */
+.ph{width:296px;height:640px;background:var(--bg);border-radius:44px;border:7px solid #1E1E38;position:relative;overflow:hidden;display:flex;flex-direction:column;box-shadow:0 28px 56px rgba(0,0,0,.7),inset 0 0 0 1px rgba(255,255,255,.04);}
+.nch{position:absolute;top:6px;left:50%;transform:translateX(-50%);width:84px;height:21px;background:#000;border-radius:11px;z-index:100;}
+.sb{height:36px;display:flex;align-items:flex-end;justify-content:space-between;padding:0 20px 6px;flex-shrink:0;z-index:10;}
+.t{font-size:11px;font-weight:800;color:var(--text);}
+.i{font-size:9px;color:var(--sub);}
+.wh .t{color:#fff;} .wh .i{color:rgba(255,255,255,.5);}
+.s-{flex:1;overflow:hidden;position:relative;}
+.scrl{overflow-y:auto;scrollbar-width:none;}
+.scrl::-webkit-scrollbar{display:none;}
+
+/* ── Buttons ── */
+.btn{border:none;border-radius:13px;font-family:var(--ff);font-weight:800;cursor:pointer;font-size:13px;width:100%;padding:12px 18px;}
+.bP{background:linear-gradient(135deg,var(--blue),var(--blue-dk));color:#fff;box-shadow:0 5px 18px rgba(26,94,171,.35);}
+.bG{background:var(--blue-lt);color:var(--blue);}
+.bO{background:linear-gradient(135deg,var(--orange),#D97B0A);color:#fff;box-shadow:0 5px 18px rgba(247,148,29,.3);}
+.bV{background:linear-gradient(135deg,var(--green),#00A060);color:#fff;box-shadow:0 5px 18px rgba(0,196,122,.3);}
+.bR{background:linear-gradient(135deg,var(--red),#CC2222);color:#fff;}
+
+/* ── Chips ── */
+.chip{display:inline-flex;align-items:center;gap:4px;padding:3px 8px;border-radius:20px;font-size:9px;font-weight:800;}
+.cG{background:#E6FFF4;color:var(--green);}
+.cO{background:var(--orange-lt);color:var(--orange);}
+.cB{background:var(--blue-lt);color:var(--blue);}
+.cR{background:#FFF0F0;color:var(--red);}
+.cY{background:#FFF8E6;color:var(--yellow);}
+
+/* ── Nav ── */
+.nav{height:56px;background:#fff;border-top:1px solid var(--border);display:flex;align-items:center;justify-content:space-around;flex-shrink:0;padding:0 4px 4px;}
+.ni{display:flex;flex-direction:column;align-items:center;gap:2px;flex:1;}
+.ni .ic{font-size:18px;}
+.ni .lb{font-size:8px;font-weight:700;color:var(--muted);}
+.ni.a .lb{color:var(--blue);}
+.nav-cam{width:40px;height:40px;background:linear-gradient(135deg,var(--blue),var(--blue-dk));border-radius:12px;display:flex;align-items:center;justify-content:center;box-shadow:0 4px 12px rgba(26,94,171,.4);position:relative;top:-7px;}
+
+/* ── Header ── */
+.hdr{background:#fff;padding:10px 14px;border-bottom:1px solid var(--border);display:flex;align-items:center;gap:9px;flex-shrink:0;}
+.bk{width:28px;height:28px;border-radius:9px;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:12px;flex-shrink:0;}
+.pg{font-size:14px;font-weight:800;color:var(--text);}
+
+/* ── Menu row ── */
+.mr{display:flex;align-items:center;gap:11px;padding:11px 14px;border-bottom:1px solid var(--border);cursor:pointer;}
+.mr:last-child{border-bottom:none;}
+.mi{width:32px;height:32px;border-radius:10px;display:flex;align-items:center;justify-content:center;font-size:15px;}
+.mt{font-size:12px;font-weight:700;color:var(--text);flex:1;}
+.ms{font-size:9px;color:var(--sub);}
+.ma{font-size:12px;color:var(--muted);}
+
+/* ── Input ── */
+.inp{background:var(--bg);border:1.5px solid var(--border);border-radius:12px;padding:10px 13px;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text);}
+
+/* ── Card ── */
+.card{background:#fff;border-radius:14px;border:1px solid var(--border);}
+
+/* ── Animations ── */
+@keyframes floatY{0%,100%{transform:translateY(0)}50%{transform:translateY(-8px)}}
+@keyframes pop{from{transform:scale(0);opacity:0}60%{transform:scale(1.15)}to{transform:scale(1);opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes confetti{0%{transform:translateY(-10px) rotate(0);opacity:1}100%{transform:translateY(130px) rotate(720deg);opacity:0}}
+@keyframes blink{0%,100%{opacity:1}50%{opacity:0}}
+@keyframes scanLine{0%,100%{top:5%}50%{top:90%}}
+@keyframes glow{0%,100%{box-shadow:0 0 0 0 rgba(0,196,122,.4)}50%{box-shadow:0 0 0 16px rgba(0,196,122,0)}}
+@keyframes pulse{0%,100%{transform:scale(1)}50%{transform:scale(1.05)}}
+@keyframes ripple{0%{transform:scale(.5);opacity:.8}100%{transform:scale(2.5);opacity:0}}
+@keyframes slideUp{from{transform:translateY(20px);opacity:0}to{transform:translateY(0);opacity:1}}
+@keyframes shimmer{0%{background-position:-200%}100%{background-position:200%}}
+</style>
+</head>
+<body>
+
+<!-- ════════════════════════════════════════════
+     PAYMENT FLOW  (section 10 — full set)
+════════════════════════════════════════════ -->
+<h2 class="s">⑩ Payment Flow — All States</h2>
+<div class="g">
+
+<!-- P1  Initiating -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:24px;text-align:center;background:#fff;">
+  <div style="width:70px;height:70px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:28px;position:relative;">
+    <div style="position:absolute;inset:-3px;border-radius:50%;border:3px solid var(--blue);border-top-color:transparent;animation:spin .8s linear infinite;"></div>💳
+  </div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Initiating Payment…</div>
+  <div style="font-size:10px;color:var(--sub);">Connecting to Razorpay · Routing to GPay</div>
+  <div style="background:var(--bg);border-radius:14px;padding:14px;width:100%;text-align:center;">
+    <div style="font-size:24px;font-weight:900;color:var(--blue);">₹557.20</div>
+    <div style="font-size:9px;color:var(--sub);margin-top:2px;">Do not press back</div>
+  </div>
+</div></div><div class="lbl">P-1 Initiating</div></div>
+
+<!-- P2  Redirecting to PSP -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:linear-gradient(180deg,var(--blue-lt),#fff);">
+  <div style="font-size:56px;animation:floatY 1.5s ease-in-out infinite;">📱</div>
+  <div class="chip cB">Redirecting to GPay</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Opening GPay…</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Please complete the ₹557.20 payment in GPay. The screen will auto-update once confirmed.</div>
+  <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:12px;width:100%;">
+    <div style="display:flex;gap:8px;margin-bottom:6px;"><div style="width:5px;height:5px;border-radius:50%;background:var(--green);margin-top:5px;"></div><span style="font-size:10px;color:var(--sub);">Order created</span></div>
+    <div style="display:flex;gap:8px;"><div style="width:5px;height:5px;border-radius:50%;background:var(--yellow);margin-top:5px;animation:blink .8s infinite;"></div><span style="font-size:10px;color:var(--sub);">Waiting for UPI auth…</span></div>
+  </div>
+  <div style="font-size:9px;color:var(--muted);">30s auto-timeout</div>
+</div></div><div class="lbl">P-2 Redirect PSP</div></div>
+
+<!-- P3  Processing -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#fff;">
+  <div style="position:relative;width:80px;height:80px;">
+    <div style="position:absolute;inset:0;border-radius:50%;border:3px solid var(--border);"></div>
+    <div style="position:absolute;inset:0;border-radius:50%;border:3px solid var(--blue);border-right-color:transparent;border-bottom-color:transparent;animation:spin 1s linear infinite;"></div>
+    <div style="position:absolute;inset:8px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:24px;">🔒</div>
+  </div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Payment Processing</div>
+  <div style="font-size:10px;color:var(--sub);">Bank is verifying your transaction</div>
+  <div style="background:var(--bg);border-radius:12px;padding:12px;width:100%;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;color:var(--sub);">Amount</span><span style="font-size:10px;font-weight:700;color:var(--text);">₹557.20</span></div>
+    <div style="display:flex;justify-content:space-between;"><span style="font-size:10px;color:var(--sub);">Method</span><span style="font-size:10px;font-weight:700;color:var(--blue);">GPay · UPI</span></div>
+  </div>
+  <div style="font-size:9px;color:var(--muted);">Do not close the app</div>
+</div></div><div class="lbl">P-3 Processing</div></div>
+
+<!-- P4  Slow Network -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#fff;">
+  <div style="font-size:52px;animation:floatY 2s ease-in-out infinite;">📡</div>
+  <div class="chip cY">Slow Network</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Connection is Slow</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Payment is taking longer than usual. Please stay on this screen — your payment is safe.</div>
+  <div style="background:#FFF8E6;border-radius:12px;padding:10px;width:100%;display:flex;gap:8px;align-items:center;text-align:left;">
+    <span>💡</span><span style="font-size:9px;color:var(--sub);">Move closer to store entrance for better signal</span>
+  </div>
+  <div style="height:4px;width:180px;background:var(--border);border-radius:2px;overflow:hidden;"><div style="height:100%;width:45%;background:var(--yellow);border-radius:2px;animation:blink 1.5s infinite;"></div></div>
+</div></div><div class="lbl">P-4 Slow Network</div></div>
+
+<!-- P5  Payment Pending -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#fff;">
+  <div style="font-size:52px;animation:floatY 2s ease-in-out infinite;">⏳</div>
+  <div class="chip cY">Payment Pending</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Awaiting Confirmation</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Your payment is pending. Bank confirmation can take up to 2 minutes.</div>
+  <div style="background:var(--bg);border-radius:14px;padding:14px;width:100%;">
+    <div style="font-size:22px;font-weight:900;color:var(--yellow);">Checking…</div>
+    <div style="font-size:9px;color:var(--sub);margin-top:2px;">Auto-refreshes every 10 seconds</div>
+  </div>
+  <button class="btn bG">Check Payment Status</button>
+</div></div><div class="lbl">P-5 Payment Pending</div></div>
+
+<!-- P6  Delayed Confirmation -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#fff;">
+  <div style="font-size:52px;animation:floatY 2s ease-in-out infinite;">🔄</div>
+  <div class="chip cO">Delayed</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Confirmation Delayed</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Bank confirmation is taking longer than expected. We'll notify you on WhatsApp once confirmed.</div>
+  <div style="background:var(--orange-lt);border-radius:12px;padding:10px;width:100%;display:flex;gap:8px;text-align:left;">
+    <span>💬</span><span style="font-size:9px;color:var(--orange);font-weight:600;">WhatsApp confirmation will be sent to +91 9876•••210</span>
+  </div>
+  <button class="btn bO">Exit Store (Payment Pending)</button>
+  <button class="btn bG" style="font-size:11px;">Retry Confirmation</button>
+</div></div><div class="lbl">P-6 Delayed Confirm</div></div>
+
+<!-- P7  Verification Retry -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:24px;text-align:center;background:#fff;">
+  <div style="width:68px;height:68px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:26px;position:relative;">
+    <div style="position:absolute;inset:-3px;border-radius:50%;border:3px solid var(--blue);border-top-color:transparent;animation:spin .8s linear infinite;"></div>🔃
+  </div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Retrying Verification</div>
+  <div style="font-size:10px;color:var(--sub);">Attempt 2 of 3 · Please wait</div>
+  <div style="background:var(--bg);border-radius:12px;padding:10px;width:100%;display:flex;flex-direction:column;gap:5px;">
+    <div style="display:flex;gap:8px;"><span style="color:var(--green);font-size:12px;">✓</span><span style="font-size:10px;color:var(--sub);">Attempt 1 — Timeout</span></div>
+    <div style="display:flex;gap:8px;"><div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--blue);border-top-color:transparent;animation:spin .8s linear infinite;flex-shrink:0;margin-top:1px;"></div><span style="font-size:10px;color:var(--sub);">Attempt 2 — Checking…</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--muted);font-size:12px;">○</span><span style="font-size:10px;color:var(--muted);">Attempt 3 — Standby</span></div>
+  </div>
+</div></div><div class="lbl">P-7 Verify Retry</div></div>
+
+<!-- P8  Payment SUCCESS 🎉 -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;background:#fff;position:relative;overflow:hidden;">
+  <!-- confetti -->
+  <div style="position:absolute;top:-10px;left:15%;width:8px;height:8px;background:var(--orange);border-radius:2px;animation:confetti 1.8s .0s ease-in infinite;"></div>
+  <div style="position:absolute;top:-10px;left:35%;width:6px;height:10px;background:var(--blue);border-radius:2px;animation:confetti 2s .3s ease-in infinite;"></div>
+  <div style="position:absolute;top:-10px;left:55%;width:10px;height:6px;background:var(--green);border-radius:2px;animation:confetti 1.6s .5s ease-in infinite;"></div>
+  <div style="position:absolute;top:-10px;left:70%;width:7px;height:9px;background:var(--yellow);border-radius:50%;animation:confetti 2.2s .2s ease-in infinite;"></div>
+  <div style="position:absolute;top:-10px;left:80%;width:9px;height:7px;background:var(--orange);border-radius:2px;animation:confetti 1.9s .7s ease-in infinite;"></div>
+  <div style="width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,var(--green),#00A060);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(0,196,122,.35),0 0 0 14px rgba(0,196,122,.1);animation:pop .5s cubic-bezier(0.175,0.885,0.32,1.275);">
+    <span style="font-size:34px;color:#fff;">✓</span>
+  </div>
+  <div style="font-size:19px;font-weight:900;color:var(--text);">Payment Successful! 🎉</div>
+  <div style="font-size:10px;color:var(--sub);">₹557.20 · UPI via GPay</div>
+  <div style="background:var(--bg);border-radius:14px;padding:12px;width:100%;text-align:left;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9px;color:var(--sub);">Order ID</span><span style="font-size:9px;font-weight:700;color:var(--blue);font-family:monospace;">ZPY-8821</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9px;color:var(--sub);">Amount</span><span style="font-size:9px;font-weight:700;">₹557.20</span></div>
+    <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:var(--sub);">Time</span><span style="font-size:9px;font-weight:700;">9:41 AM · Today</span></div>
+  </div>
+  <div style="background:#E6FFF4;border-radius:10px;padding:8px 10px;width:100%;display:flex;gap:7px;align-items:center;">
+    <span>💬</span><span style="font-size:9px;color:var(--green);font-weight:700;">WhatsApp receipt sent · +52 Zippy Points!</span>
+  </div>
+  <button class="btn bV" style="margin-bottom:2px;padding:11px;">Go to Exit Gate 🚪</button>
+  <button class="btn bG" style="font-size:11px;padding:9px;">View Receipt</button>
+</div></div><div class="lbl">P-8 Success ✅</div></div>
+
+<!-- P9  Payment Failed -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;background:#fff;">
+  <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--red),#C01010);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(255,59,59,.3);animation:pop .5s ease;">
+    <span style="font-size:30px;color:#fff;">✗</span>
+  </div>
+  <div class="chip cR">Payment Failed</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Transaction Unsuccessful</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">No amount was deducted. Please try again.</div>
+  <div style="background:#FFF0F0;border-radius:12px;padding:10px;width:100%;text-align:left;">
+    <div style="font-size:9px;color:var(--red);font-weight:700;">Error: Bank declined · Code UPI-101</div>
+  </div>
+  <button class="btn bP" style="margin-bottom:4px;padding:11px;">Retry Same Method</button>
+  <button class="btn bO" style="padding:11px;">Change Method</button>
+  <button class="btn bG" style="font-size:11px;padding:9px;">Contact Support</button>
+</div></div><div class="lbl">P-9 Failed</div></div>
+
+<!-- P10  Payment Cancelled -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;background:#fff;">
+  <div style="font-size:52px;animation:floatY 3s ease-in-out infinite;">🚫</div>
+  <div class="chip" style="background:#F0F0F8;color:#666;">Cancelled</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Payment Cancelled</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">You cancelled the UPI payment. Cart is saved for 10 minutes.</div>
+  <div style="background:var(--bg);border-radius:12px;padding:12px;width:100%;text-align:center;">
+    <div style="font-size:22px;font-weight:900;color:var(--text);">9:51 AM</div>
+    <div style="font-size:9px;color:var(--sub);">Cart expires at</div>
+  </div>
+  <button class="btn bP" style="padding:11px;">Pay Again</button>
+  <button class="btn bR" style="font-size:11px;padding:9px;">Abandon Cart</button>
+</div></div><div class="lbl">P-10 Cancelled</div></div>
+
+<!-- P11  Retry Prompt -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;background:#fff;">
+  <div style="font-size:52px;animation:floatY 3s ease-in-out infinite;">🔁</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Try Again?</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Payment attempt 1 failed. Would you like to retry with the same method or choose a different one?</div>
+  <div style="background:#FFF8E6;border-radius:12px;padding:10px;width:100%;display:flex;gap:8px;text-align:left;">
+    <span>💡</span><span style="font-size:9px;color:var(--yellow);font-weight:600;">GPay has a 98.4% success rate on this network</span>
+  </div>
+  <button class="btn bP" style="padding:11px;">Retry with GPay</button>
+  <button class="btn bO" style="padding:10px;">Use PhonePe Instead</button>
+  <button class="btn bG" style="padding:10px;font-size:11px;">Pay with Card</button>
+</div></div><div class="lbl">P-11 Retry Prompt</div></div>
+
+<!-- P12  Split Payment -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Split Payment</span></div>
+  <div class="scrl" style="flex:1;padding:11px;">
+    <div style="background:linear-gradient(135deg,#F5F0FF,#EEF2FF);border-radius:14px;padding:14px;text-align:center;margin-bottom:12px;">
+      <div style="font-size:9px;color:var(--sub);">Total</div>
+      <div style="font-size:26px;font-weight:900;color:var(--text);">₹557.20</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:7px;margin-bottom:12px;">
+      <div style="background:#fff;border-radius:13px;border:2px solid var(--green);padding:11px 13px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><div style="display:flex;gap:7px;align-items:center;"><span>🪙</span><span style="font-size:12px;font-weight:700;color:var(--text);">Zippy Points</span></div><span style="font-size:13px;font-weight:900;color:var(--green);">₹34.00</span></div>
+        <div style="font-size:9px;color:var(--sub);">340 pts · all applied</div>
+      </div>
+      <div style="background:#fff;border-radius:13px;border:2px solid var(--blue);padding:11px 13px;">
+        <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:4px;"><div style="display:flex;gap:7px;align-items:center;"><span>📱</span><span style="font-size:12px;font-weight:700;color:var(--text);">UPI</span></div><span style="font-size:13px;font-weight:900;color:var(--blue);">₹523.20</span></div>
+        <div style="font-size:9px;color:var(--sub);">Balance after points</div>
+      </div>
+    </div>
+    <div style="background:#F0FFF8;border-radius:10px;padding:10px;display:flex;justify-content:space-between;margin-bottom:10px;">
+      <span style="font-size:11px;font-weight:800;color:var(--green);">You save ₹34</span>
+      <span style="font-size:9px;color:var(--sub);">via Points</span>
+    </div>
+    <button class="btn bP">Pay ₹523.20 via UPI</button>
+  </div>
+</div></div><div class="lbl">P-12 Split Payment</div></div>
+
+<!-- P13  CVV Modal -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="position:relative;background:#fff;display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Card Payment</span></div>
+  <div style="padding:12px;flex:1;opacity:.4;">
+    <div style="background:linear-gradient(135deg,#1A5EAB,#0E3D7A);border-radius:14px;height:80px;padding:14px;margin-bottom:8px;">
+      <div style="font-size:10px;color:rgba(255,255,255,.6);">•••• •••• •••• 4521</div>
+      <div style="font-size:11px;color:#fff;margin-top:8px;">RAHUL MEHTA</div>
+    </div>
+  </div>
+  <!-- CVV sheet -->
+  <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:20px 20px 0 0;padding:18px;box-shadow:0 -6px 30px rgba(0,0,0,.15);">
+    <div style="width:32px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 14px;"></div>
+    <div style="font-size:14px;font-weight:900;color:var(--text);margin-bottom:5px;">Enter CVV 🔒</div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:12px;">Last 3 digits on the back of your card</div>
+    <div style="display:flex;gap:8px;justify-content:center;margin-bottom:14px;">
+      <div style="width:46px;height:50px;border-radius:12px;border:2px solid var(--blue);background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--blue);">•</div>
+      <div style="width:46px;height:50px;border-radius:12px;border:2px solid var(--blue);background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--blue);">•</div>
+      <div style="width:46px;height:50px;border-radius:12px;border:2px dashed var(--border);background:var(--bg);display:flex;align-items:center;justify-content:center;font-size:20px;font-weight:900;color:var(--blue);"><span style="width:2px;height:20px;background:var(--blue);display:inline-block;animation:blink .8s infinite;"></span></div>
+    </div>
+    <button class="btn bP">Confirm Payment</button>
+  </div>
+</div></div><div class="lbl">P-13 CVV Modal</div></div>
+
+<!-- P14  3DS Auth -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;background:#fff;">
+  <div style="font-size:48px;animation:floatY 2s ease-in-out infinite;">🏦</div>
+  <div class="chip cB">3D Secure</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Bank Verification</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Your bank has initiated 3DS authentication. An OTP has been sent to your registered mobile.</div>
+  <div style="display:flex;gap:8px;justify-content:center;margin:4px 0;">
+    <div style="width:44px;height:48px;border-radius:11px;border:2px solid var(--blue);background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--blue);">7</div>
+    <div style="width:44px;height:48px;border-radius:11px;border:2px solid var(--blue);background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--blue);">8</div>
+    <div style="width:44px;height:48px;border-radius:11px;border:2px solid var(--blue);background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:900;color:var(--blue);">4</div>
+    <div style="width:44px;height:48px;border-radius:11px;border:2px solid var(--border);background:var(--bg);opacity:.4;"></div>
+  </div>
+  <div style="font-size:9px;color:var(--sub);">OTP sent by HDFC Bank · Expires in 9:44</div>
+  <button class="btn bP">Verify &amp; Pay</button>
+</div></div><div class="lbl">P-14 3DS Auth</div></div>
+
+<!-- P15  Transaction Limit -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px;text-align:center;background:#fff;">
+  <div style="font-size:48px;animation:floatY 3s ease-in-out infinite;">⚠️</div>
+  <div class="chip cY">Limit Reached</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Transaction Limit Exceeded</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Your UPI daily transaction limit (₹1,00,000) has been reached. Use another payment method.</div>
+  <button class="btn bO" style="margin-bottom:4px;">Pay with Card</button>
+  <button class="btn bG" style="font-size:11px;">Pay with Netbanking</button>
+</div></div><div class="lbl">P-15 Tx Limit</div></div>
+
+<!-- P16  UPI Lite Prompt -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:22px;text-align:center;background:linear-gradient(180deg,#F0FFF8,#fff);">
+  <div style="font-size:52px;animation:floatY 3s ease-in-out infinite;">⚡</div>
+  <div class="chip cG">Recommended</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Activate UPI Lite?</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">UPI Lite lets you pay up to ₹500 instantly without PIN for faster checkout at Zippyra.</div>
+  <div style="background:#E6FFF4;border-radius:12px;padding:12px;width:100%;text-align:left;">
+    <div style="font-size:10px;font-weight:700;color:var(--green);margin-bottom:5px;">✓ Benefits</div>
+    <div style="font-size:9px;color:var(--sub);line-height:1.7;">• No PIN for transactions under ₹500<br>• Works offline<br>• Instant checkout at exit gate</div>
+  </div>
+  <button class="btn bV">Activate UPI Lite</button>
+  <button class="btn bG" style="font-size:11px;">Not Now</button>
+</div></div><div class="lbl">P-16 UPI Lite</div></div>
+
+</div><!-- end payment grid -->
+
+<!-- ════════════════════════════════════════════
+     EXIT FLOW  (section 11)
+════════════════════════════════════════════ -->
+<h2 class="s">⑪ Exit Flow — All States</h2>
+<div class="g">
+
+<!-- E1  Exit Pass Generating -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;padding:22px;text-align:center;background:#fff;">
+  <div style="position:relative;width:80px;height:80px;">
+    <div style="position:absolute;inset:0;border-radius:50%;border:3px solid var(--border);"></div>
+    <div style="position:absolute;inset:0;border-radius:50%;border:3px solid var(--green);border-right-color:transparent;border-bottom-color:transparent;animation:spin .8s linear infinite;"></div>
+    <div style="position:absolute;inset:8px;border-radius:50%;background:#E6FFF4;display:flex;align-items:center;justify-content:center;font-size:28px;">🚪</div>
+  </div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Generating Exit Pass</div>
+  <div style="font-size:10px;color:var(--sub);">Verifying payment · Locking cart · Signing QR</div>
+  <div style="background:var(--bg);border-radius:12px;padding:12px;width:100%;">
+    <div style="display:flex;gap:8px;margin-bottom:5px;"><span style="color:var(--green);font-size:12px;">✓</span><span style="font-size:9px;color:var(--sub);">Payment confirmed</span></div>
+    <div style="display:flex;gap:8px;margin-bottom:5px;"><span style="color:var(--green);font-size:12px;">✓</span><span style="font-size:9px;color:var(--sub);">Cart locked (4 items)</span></div>
+    <div style="display:flex;gap:8px;"><div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--blue);border-top-color:transparent;animation:spin .8s linear infinite;flex-shrink:0;margin-top:1px;"></div><span style="font-size:9px;color:var(--sub);">Generating signed QR…</span></div>
+  </div>
+</div></div><div class="lbl">E-1 Generating Pass</div></div>
+
+<!-- E2  Exit QR Display (High Brightness) -->
+<div class="f">
+<div class="ph" style="background:#fff;"><div class="nch"></div>
+  <div class="sb" style="background:linear-gradient(135deg,var(--blue),var(--blue-dk));padding-top:8px;"><span class="t" style="color:#fff;">9:41</span><span class="i" style="color:rgba(255,255,255,.6);">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;background:#fff;">
+  <div style="background:linear-gradient(135deg,var(--blue),var(--blue-dk));padding:14px 14px 18px;text-align:center;flex-shrink:0;">
+    <div style="font-size:14px;font-weight:900;color:#fff;">🚪 Exit Validation QR</div>
+    <div style="font-size:9px;color:rgba(255,255,255,.7);margin-top:3px;">Show this at the exit gate · High brightness mode</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:14px;gap:10px;">
+    <!-- QR placeholder with checkered pattern -->
+    <div style="width:150px;height:150px;background:#fff;border-radius:14px;padding:10px;border:2px dashed var(--blue);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 20px rgba(26,94,171,.15);">
+      <div style="width:100%;height:100%;background:
+        repeating-conic-gradient(var(--text) 0% 25%, transparent 0% 50%)
+        0 0 / 10px 10px;
+        border-radius:4px;opacity:.85;">
+      </div>
+    </div>
+    <div style="font-family:monospace;font-size:12px;font-weight:700;color:var(--blue);letter-spacing:2px;">ZPY-K4M-8821</div>
+    <div style="font-size:9px;color:var(--sub);">Valid for 10 minutes · Expires 9:52 AM</div>
+    <div style="background:#E6FFF4;border:1px solid #B3F0D5;border-radius:10px;padding:8px 12px;display:flex;gap:8px;width:100%;"><span>✅</span><div style="font-size:9px;color:var(--green);font-weight:700;">Payment confirmed · 4 items · ₹557.20</div></div>
+    <div style="font-size:9px;color:var(--muted);display:flex;gap:5px;align-items:center;"><div style="width:6px;height:6px;border-radius:50%;background:var(--green);animation:blink .8s infinite;"></div>RFID gate pre-authorised</div>
+  </div>
+</div></div><div class="lbl">E-2 Exit QR Display</div></div>
+
+<!-- E3  QR Refresh (Anti-Screenshot) -->
+<div class="f">
+<div class="ph" style="background:#fff;"><div class="nch"></div><div class="sb" style="background:var(--blue-dk);"><span class="t" style="color:#fff;">9:41</span><span class="i" style="color:rgba(255,255,255,.5);">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px;text-align:center;background:#fff;">
+  <div class="chip cY" style="animation:blink 1s infinite;">⚠️ Screenshot Detected</div>
+  <div style="font-size:14px;font-weight:900;color:var(--text);">QR Refreshed for Security</div>
+  <div style="font-size:9px;color:var(--sub);line-height:1.6;margin-bottom:4px;">QR codes automatically refresh every 60 seconds and are invalidated on screenshot to prevent fraud.</div>
+  <div style="width:130px;height:130px;background:#fff;border-radius:12px;padding:8px;border:2px solid var(--green);box-shadow:0 4px 16px rgba(0,196,122,.15);display:flex;align-items:center;justify-content:center;animation:pop .4s ease;">
+    <div style="width:100%;height:100%;background:repeating-conic-gradient(var(--text) 0% 25%,transparent 0% 50%) 0 0 / 8px 8px;border-radius:3px;opacity:.8;"></div>
+  </div>
+  <div style="font-family:monospace;font-size:10px;font-weight:700;color:var(--green);">ZPY-K4M-NEW7</div>
+  <div style="background:#FFF8E6;border-radius:10px;padding:8px 12px;width:100%;display:flex;gap:7px;text-align:left;">
+    <span>🔒</span><span style="font-size:9px;color:var(--yellow);font-weight:600;">New QR generated · Screenshot blocked for security</span>
+  </div>
+</div></div><div class="lbl">E-3 QR Refresh</div></div>
+
+<!-- E4  Exit Validation in Progress -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div style="background:linear-gradient(135deg,var(--blue),var(--blue-dk));padding:14px;text-align:center;flex-shrink:0;">
+    <div style="font-size:14px;font-weight:900;color:#fff;">Validating Exit</div>
+    <div style="font-size:9px;color:rgba(255,255,255,.7);margin-top:2px;">Please wait — Gate checking…</div>
+  </div>
+  <div style="flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:18px;text-align:center;background:#fff;">
+    <div style="position:relative;width:90px;height:90px;">
+      <div style="position:absolute;inset:0;border-radius:50%;border:4px solid var(--border);"></div>
+      <div style="position:absolute;inset:0;border-radius:50%;border:4px solid var(--blue);border-right-color:transparent;animation:spin 1.2s linear infinite;"></div>
+      <div style="position:absolute;inset:10px;border-radius:50%;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:30px;">🎥</div>
+    </div>
+    <div style="font-size:14px;font-weight:900;color:var(--text);">CV Cameras Active</div>
+    <div style="background:var(--bg);border-radius:12px;padding:12px;width:100%;text-align:left;">
+      <div style="display:flex;gap:8px;margin-bottom:5px;"><div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--blue);border-top-color:transparent;animation:spin .8s linear infinite;flex-shrink:0;margin-top:1px;"></div><span style="font-size:9px;color:var(--sub);">Scanning items via computer vision…</span></div>
+      <div style="display:flex;gap:8px;margin-bottom:5px;"><div style="width:12px;height:12px;border-radius:50%;border:2px solid var(--blue);border-top-color:transparent;animation:spin .8s linear infinite;flex-shrink:0;margin-top:1px;"></div><span style="font-size:9px;color:var(--sub);">RFID gate reading tags…</span></div>
+      <div style="display:flex;gap:8px;"><span style="color:var(--muted);font-size:12px;">○</span><span style="font-size:9px;color:var(--muted);">Invoice QR match — pending</span></div>
+    </div>
+    <div style="font-size:9px;color:var(--sub);">Usually takes 2–3 seconds</div>
+  </div>
+</div></div><div class="lbl">E-4 Validation Progress</div></div>
+
+<!-- E5  Exit Approved ✅ -->
+<div class="f">
+<div class="ph" style="background:#fff;"><div class="nch"></div><div class="sb" style="background:var(--green);"><span class="t" style="color:#fff;">9:41</span><span class="i" style="color:rgba(255,255,255,.6);">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px;text-align:center;background:#fff;position:relative;overflow:hidden;">
+  <!-- confetti -->
+  <div style="position:absolute;top:-10px;left:20%;width:7px;height:7px;background:var(--green);border-radius:50%;animation:confetti 2s .1s ease-in infinite;"></div>
+  <div style="position:absolute;top:-10px;left:50%;width:5px;height:9px;background:var(--blue);border-radius:2px;animation:confetti 1.7s .4s ease-in infinite;"></div>
+  <div style="position:absolute;top:-10px;left:75%;width:8px;height:6px;background:var(--orange);border-radius:2px;animation:confetti 2.1s .2s ease-in infinite;"></div>
+  <div style="width:82px;height:82px;border-radius:50%;background:linear-gradient(135deg,var(--green),#00A060);display:flex;align-items:center;justify-content:center;box-shadow:0 10px 28px rgba(0,196,122,.4),0 0 0 14px rgba(0,196,122,.1);animation:pop .5s ease,glow 2s 1s ease-in-out infinite;">
+    <span style="font-size:36px;color:#fff;">✓</span>
+  </div>
+  <div style="font-size:18px;font-weight:900;color:var(--green);">Exit Approved!</div>
+  <div style="font-size:10px;color:var(--sub);">All 4 items verified · Have a great day! 🎉</div>
+  <div style="background:#E6FFF4;border-radius:14px;padding:12px;width:100%;text-align:left;">
+    <div style="display:flex;gap:8px;margin-bottom:5px;"><span style="color:var(--green);">✓</span><span style="font-size:9px;">CV cameras — 4/4 matched</span></div>
+    <div style="display:flex;gap:8px;margin-bottom:5px;"><span style="color:var(--green);">✓</span><span style="font-size:9px;">RFID gate — all tags valid</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--green);">✓</span><span style="font-size:9px;">Invoice QR — signature valid</span></div>
+  </div>
+  <div style="background:linear-gradient(135deg,var(--green),#00A060);border-radius:14px;padding:14px;width:100%;text-align:center;box-shadow:0 6px 18px rgba(0,196,122,.35);">
+    <div style="font-size:16px;font-weight:900;color:#fff;">🚪 Gate Open — Exit Now</div>
+  </div>
+</div></div><div class="lbl">E-5 Exit Approved ✅</div></div>
+
+<!-- E6  Exit Denied -->
+<div class="f">
+<div class="ph" style="background:#fff;"><div class="nch"></div><div class="sb" style="background:var(--red);"><span class="t" style="color:#fff;">9:41</span><span class="i" style="color:rgba(255,255,255,.6);">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:18px;text-align:center;background:#fff;">
+  <div style="width:78px;height:78px;border-radius:50%;background:linear-gradient(135deg,var(--red),#C01010);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 24px rgba(255,59,59,.35);animation:pop .5s ease;">
+    <span style="font-size:34px;color:#fff;">✗</span>
+  </div>
+  <div class="chip cR">Mismatch Detected</div>
+  <div style="font-size:15px;font-weight:900;color:var(--red);">Exit Denied</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Item count mismatch detected. Please wait for a staff member to assist you.</div>
+  <div style="background:#FFF0F0;border-radius:12px;padding:11px;width:100%;text-align:left;">
+    <div style="display:flex;gap:8px;margin-bottom:5px;"><span style="color:var(--green);">✓</span><span style="font-size:9px;">Payment valid</span></div>
+    <div style="display:flex;gap:8px;margin-bottom:5px;"><span style="color:var(--red);">✗</span><span style="font-size:9px;color:var(--red);">RFID: 5 items detected vs 4 billed</span></div>
+    <div style="display:flex;gap:8px;"><span style="color:var(--yellow);">⚠️</span><span style="font-size:9px;">Staff notified — ETA 2 mins</span></div>
+  </div>
+  <div style="background:#FFF8E6;border-radius:10px;padding:8px 12px;width:100%;display:flex;gap:7px;">
+    <span>💡</span><span style="font-size:9px;color:var(--yellow);font-weight:600;">Please do not leave — staff is coming to assist</span>
+  </div>
+</div></div><div class="lbl">E-6 Exit Denied</div></div>
+
+<!-- E7  Manual Audit Trigger -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:12px;padding:20px;text-align:center;background:#fff;">
+  <div style="font-size:52px;animation:floatY 2s ease-in-out infinite;">🔍</div>
+  <div class="chip cY">Audit Required</div>
+  <div style="font-size:15px;font-weight:900;color:var(--text);">Manual Check Requested</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">A routine manual audit has been triggered. A staff member will verify your items in ~2 minutes.</div>
+  <div style="background:var(--bg);border-radius:12px;padding:12px;width:100%;text-align:center;">
+    <div style="font-size:22px;font-weight:900;color:var(--yellow);">Staff ETA</div>
+    <div style="font-size:26px;font-weight:900;color:var(--text);line-height:1;">1:48</div>
+    <div style="font-size:9px;color:var(--sub);">minutes</div>
+  </div>
+  <div style="font-size:9px;color:var(--sub);line-height:1.6;">Random audits are conducted on 5% of exits to ensure system accuracy. This is not a theft alert.</div>
+</div></div><div class="lbl">E-7 Manual Audit</div></div>
+
+<!-- E8  Exit Completed Success -->
+<div class="f">
+<div class="ph" style="background:#fff;"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:9px;padding:18px;text-align:center;background:linear-gradient(180deg,#E6FFF4 0%,#fff 40%);">
+  <div style="font-size:56px;animation:floatY 3s ease-in-out infinite;">🎉</div>
+  <div style="font-size:18px;font-weight:900;color:var(--text);">Thank You!</div>
+  <div style="font-size:10px;color:var(--sub);">Exit completed · Come back soon!</div>
+  <!-- receipt -->
+  <div style="background:var(--bg);border-radius:14px;padding:12px;width:100%;text-align:left;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9px;color:var(--sub);">Order</span><span style="font-size:9px;font-weight:700;color:var(--blue);font-family:monospace;">ZPY-8821</span></div>
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9px;color:var(--sub);">Items</span><span style="font-size:9px;font-weight:700;">4</span></div>
+    <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:var(--sub);">Total Paid</span><span style="font-size:9px;font-weight:700;color:var(--blue);">₹557.20</span></div>
+  </div>
+  <div style="background:#E6FFF4;border-radius:10px;padding:8px 12px;width:100%;display:flex;gap:7px;align-items:center;">
+    <span>💬</span><span style="font-size:9px;color:var(--green);font-weight:700;">WhatsApp receipt · +52 Points earned!</span>
+  </div>
+  <div style="background:var(--orange-lt);border-radius:10px;padding:8px 12px;width:100%;display:flex;gap:7px;align-items:center;">
+    <span>⭐</span><span style="font-size:9px;color:var(--orange);font-weight:700;">You now have 392 Zippy Points · Gold Tier</span>
+  </div>
+  <button class="btn bP" style="padding:10px;font-size:12px;">Continue Shopping 🛍️</button>
+</div></div><div class="lbl">E-8 Exit Complete</div></div>
+
+</div><!-- end exit grid -->
+
+<!-- ════════════════════════════════════════════
+     POST-PURCHASE & ACCOUNT  (section 12)
+════════════════════════════════════════════ -->
+<h2 class="s">⑫ Post-Purchase &amp; Account</h2>
+<div class="g">
+
+<!-- A1  Profile Screen -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb" style="background:var(--blue-dk);"><span class="t" style="color:#fff;">9:41</span><span class="i" style="color:rgba(255,255,255,.5);">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div style="background:linear-gradient(135deg,var(--blue),var(--blue-dk));padding:16px;display:flex;align-items:center;gap:12px;flex-shrink:0;">
+    <div style="width:54px;height:54px;border-radius:18px;background:rgba(255,255,255,.2);display:flex;align-items:center;justify-content:center;font-size:26px;">👤</div>
+    <div><div style="font-size:16px;font-weight:900;color:#fff;">Rahul Mehta</div><div style="font-size:10px;color:rgba(255,255,255,.7);">+91 98765 43210</div><button style="background:rgba(255,255,255,.2);border:none;border-radius:8px;padding:4px 10px;font-size:9px;font-weight:700;color:#fff;margin-top:5px;cursor:pointer;font-family:var(--ff);">Edit Profile ✏️</button></div>
+  </div>
+  <div class="scrl" style="flex:1;padding:10px 12px;">
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:7px;margin-bottom:12px;">
+      <div style="background:#fff;border-radius:11px;border:1px solid var(--border);padding:9px;text-align:center;"><div style="font-size:15px;font-weight:900;color:var(--blue);">24</div><div style="font-size:8px;color:var(--sub);">Orders</div></div>
+      <div style="background:#fff;border-radius:11px;border:1px solid var(--border);padding:9px;text-align:center;"><div style="font-size:15px;font-weight:900;color:var(--orange);">392</div><div style="font-size:8px;color:var(--sub);">Points</div></div>
+      <div style="background:#fff;border-radius:11px;border:1px solid var(--border);padding:9px;text-align:center;"><div style="font-size:15px;font-weight:900;color:var(--green);">Gold</div><div style="font-size:8px;color:var(--sub);">Tier 🥇</div></div>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;margin-bottom:8px;">
+      <div class="mr"><div class="mi" style="background:var(--blue-lt);">📦</div><div style="flex:1;"><div class="mt">My Orders</div><div class="ms">24 orders</div></div><span class="ma">›</span></div>
+      <div class="mr"><div class="mi" style="background:var(--orange-lt);">⭐</div><div style="flex:1;"><div class="mt">Zippy Points</div><div class="ms">392 pts · Gold</div></div><span class="ma">›</span></div>
+      <div class="mr"><div class="mi" style="background:#E6FFF4;">💬</div><div style="flex:1;"><div class="mt">WhatsApp Receipts</div><div class="ms">All invoices</div></div><span class="ma">›</span></div>
+      <div class="mr" style="border:none;"><div class="mi" style="background:#F5F5FF;">📍</div><div style="flex:1;"><div class="mt">Saved Addresses</div><div class="ms">2 locations</div></div><span class="ma">›</span></div>
+    </div>
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);overflow:hidden;">
+      <div class="mr"><div class="mi" style="background:var(--bg);">⚙️</div><div style="flex:1;"><div class="mt">Settings</div></div><span class="ma">›</span></div>
+      <div class="mr" style="border:none;"><div class="mi" style="background:#FFF0F0;">🚪</div><div style="flex:1;"><div class="mt" style="color:var(--red);">Logout</div></div><span class="ma" style="color:var(--red);">›</span></div>
+    </div>
+  </div>
+  <div class="nav">
+    <div class="ni"><span class="ic">🏠</span><span class="lb">Home</span></div>
+    <div class="ni"><span class="ic">⊞</span><span class="lb">Categ.</span></div>
+    <div class="ni"><div class="nav-cam"><span style="font-size:20px;">📷</span></div><span class="lb">Scan</span></div>
+    <div class="ni"><span class="ic">📦</span><span class="lb">Orders</span></div>
+    <div class="ni a"><span class="ic">👤</span><span class="lb" style="color:var(--blue);">Profile</span></div>
+  </div>
+</div></div><div class="lbl">A-1 Profile</div></div>
+
+<!-- A2  Edit Profile -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Edit Profile</span><span style="font-size:11px;font-weight:700;color:var(--blue);margin-left:auto;">Save</span></div>
+  <div class="scrl" style="flex:1;padding:12px;">
+    <div style="width:72px;height:72px;border-radius:22px;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:34px;margin:0 auto 16px;position:relative;border:3px solid var(--blue);">
+      👤
+      <div style="position:absolute;bottom:-4px;right:-4px;width:22px;height:22px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;font-size:11px;color:#fff;">✏️</div>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:10px;">
+      <div><div style="font-size:9px;font-weight:700;color:var(--sub);margin-bottom:4px;">FULL NAME</div><div class="inp" style="border-color:var(--blue);"><span style="font-size:14px;">👤</span><span style="font-size:12px;font-weight:700;color:var(--text);">Rahul Mehta</span></div></div>
+      <div><div style="font-size:9px;font-weight:700;color:var(--sub);margin-bottom:4px;">MOBILE</div><div class="inp"><span>📱</span><span style="font-size:12px;color:var(--text);">+91 98765 43210</span><span style="font-size:9px;color:var(--green);margin-left:auto;">Verified ✓</span></div></div>
+      <div><div style="font-size:9px;font-weight:700;color:var(--sub);margin-bottom:4px;">EMAIL</div><div class="inp"><span>✉️</span><span style="font-size:12px;color:var(--text);">rahul@gmail.com</span></div></div>
+      <div><div style="font-size:9px;font-weight:700;color:var(--sub);margin-bottom:4px;">BIRTHDAY</div><div class="inp"><span>🎂</span><span style="font-size:12px;color:var(--text);">Mar 12, 1994</span></div></div>
+      <div><div style="font-size:9px;font-weight:700;color:var(--sub);margin-bottom:4px;">PREFERRED LANGUAGE</div><div class="inp"><span>🌐</span><span style="font-size:12px;color:var(--text);">English</span><span style="font-size:12px;color:var(--muted);margin-left:auto;">›</span></div></div>
+    </div>
+  </div>
+</div></div><div class="lbl">A-2 Edit Profile</div></div>
+
+<!-- A3  Order History -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">My Orders</span><span style="font-size:11px;font-weight:700;color:var(--blue);margin-left:auto;">Filter</span></div>
+  <div style="background:#fff;display:flex;gap:6px;padding:8px 0 8px 12px;border-bottom:1px solid var(--border);overflow-x:auto;scrollbar-width:none;flex-shrink:0;">
+    <button style="flex-shrink:0;padding:5px 12px;border-radius:20px;background:var(--blue);color:#fff;border:none;font-size:10px;font-weight:700;font-family:var(--ff);">All</button>
+    <button style="flex-shrink:0;padding:5px 12px;border-radius:20px;background:var(--bg);color:var(--sub);border:none;font-size:10px;font-weight:700;font-family:var(--ff);">Completed</button>
+    <button style="flex-shrink:0;padding:5px 12px;border-radius:20px;background:var(--bg);color:var(--sub);border:none;font-size:10px;font-weight:700;font-family:var(--ff);">Returns</button>
+  </div>
+  <div class="scrl" style="flex:1;padding:10px 12px;">
+    <!-- order 1 -->
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:12px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><div><div style="font-size:11px;font-weight:800;color:var(--text);">ZPY-2025-K4M-8821</div><span class="chip cG" style="margin-top:3px;display:inline-flex;">Completed</span></div><div style="font-size:9px;color:var(--muted);text-align:right;">Today<br>9:41 AM</div></div>
+      <div style="display:flex;gap:5px;margin-bottom:8px;"><span style="font-size:22px;">🧈</span><span style="font-size:22px;">🥔</span><span style="font-size:22px;">🍵</span><div style="font-size:9px;color:var(--sub);font-weight:700;background:var(--bg);border-radius:7px;padding:4px 7px;align-self:center;">+1</div></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--border);"><span style="font-size:12px;font-weight:800;color:var(--text);">₹557.20 · 4 items</span><button style="background:var(--blue-lt);border:none;border-radius:8px;padding:5px 10px;font-size:9px;font-weight:800;color:var(--blue);cursor:pointer;font-family:var(--ff);">Reorder ↻</button></div>
+    </div>
+    <!-- order 2 -->
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:12px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><div><div style="font-size:11px;font-weight:800;color:var(--text);">ZPY-2025-K2M-7134</div><span class="chip cB" style="margin-top:3px;display:inline-flex;">Scan &amp; Go</span></div><div style="font-size:9px;color:var(--muted);">Yesterday</div></div>
+      <div style="display:flex;gap:5px;margin-bottom:8px;"><span style="font-size:22px;">🥛</span><span style="font-size:22px;">🍞</span><span style="font-size:22px;">🥚</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--border);"><span style="font-size:12px;font-weight:800;color:var(--text);">₹185 · 3 items</span><button style="background:var(--blue-lt);border:none;border-radius:8px;padding:5px 10px;font-size:9px;font-weight:800;color:var(--blue);cursor:pointer;font-family:var(--ff);">Reorder ↻</button></div>
+    </div>
+    <!-- order 3 return -->
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:12px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:7px;"><div><div style="font-size:11px;font-weight:800;color:var(--text);">ZPY-2025-K1M-6021</div><span class="chip cO" style="margin-top:3px;display:inline-flex;">Return Req.</span></div><div style="font-size:9px;color:var(--muted);">Mar 3</div></div>
+      <div style="display:flex;gap:5px;margin-bottom:8px;"><span style="font-size:22px;">🧴</span><span style="font-size:22px;">🪥</span></div>
+      <div style="display:flex;justify-content:space-between;align-items:center;padding-top:7px;border-top:1px solid var(--border);"><span style="font-size:12px;font-weight:800;color:var(--text);">₹640 · 2 items</span><button style="background:var(--orange-lt);border:none;border-radius:8px;padding:5px 10px;font-size:9px;font-weight:800;color:var(--orange);cursor:pointer;font-family:var(--ff);">Track →</button></div>
+    </div>
+  </div>
+</div></div><div class="lbl">A-3 Order History</div></div>
+
+<!-- A4  Order Detail -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Order Details</span></div>
+  <div class="scrl" style="flex:1;padding:11px 12px;">
+    <div style="background:linear-gradient(135deg,var(--green),#00A060);border-radius:14px;padding:14px;text-align:center;margin-bottom:12px;"><div class="chip" style="background:rgba(255,255,255,.25);color:#fff;margin-bottom:5px;">Completed ✓</div><div style="font-size:11px;font-weight:800;color:#fff;">ZPY-2025-K4M-8821</div><div style="font-size:9px;color:rgba(255,255,255,.7);margin-top:2px;">Today · 9:41 AM · Koramangala</div></div>
+    <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:11px;margin-bottom:8px;">
+      <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:8px;">Items (4)</div>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);"><span style="font-size:22px;">🧈</span><div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);">Amul Butter 500g</div><div style="font-size:9px;color:var(--sub);">×1</div></div><span style="font-size:11px;font-weight:800;color:var(--text);">₹280</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid var(--border);"><span style="font-size:22px;">🥔</span><div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);">Lay's Classic 150g</div><div style="font-size:9px;color:var(--sub);">×2</div></div><span style="font-size:11px;font-weight:800;color:var(--text);">₹90</span></div>
+      <div style="display:flex;align-items:center;gap:8px;padding:6px 0;"><span style="font-size:22px;">🍵</span><div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);">Tata Tea Gold</div><div style="font-size:9px;color:var(--sub);">×1</div></div><span style="font-size:11px;font-weight:800;color:var(--text);">₹195</span></div>
+    </div>
+    <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:11px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;color:var(--sub);">Subtotal</span><span style="font-size:10px;font-weight:700;">₹565</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;color:var(--sub);">GST</span><span style="font-size:10px;font-weight:700;">₹48.20</span></div>
+      <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:10px;color:var(--sub);">Discount</span><span style="font-size:10px;font-weight:700;color:var(--green);">−₹56</span></div>
+      <hr style="border:none;border-top:1px dashed var(--border);margin:6px 0;">
+      <div style="display:flex;justify-content:space-between;"><span style="font-size:12px;font-weight:900;color:var(--text);">Total</span><span style="font-size:12px;font-weight:900;color:var(--blue);">₹557.20</span></div>
+    </div>
+    <div style="display:flex;gap:7px;">
+      <button class="btn bG" style="font-size:11px;padding:9px;">📄 Invoice</button>
+      <button class="btn bP" style="font-size:11px;padding:9px;">↻ Reorder</button>
+    </div>
+  </div>
+</div></div><div class="lbl">A-4 Order Detail</div></div>
+
+<!-- A5  Invoice View -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Tax Invoice</span><span style="font-size:11px;font-weight:700;color:var(--blue);margin-left:auto;">📥 PDF</span></div>
+  <div class="scrl" style="flex:1;padding:11px 12px;">
+    <div style="background:#fff;border-radius:14px;border:1px solid var(--border);padding:14px;margin-bottom:8px;">
+      <div style="display:flex;justify-content:space-between;margin-bottom:10px;"><div><div style="font-size:14px;font-weight:900;color:var(--blue);">⚡ Zippyra</div><div style="font-size:9px;color:var(--sub);">GST: 29AABCZ1234A1Z5</div></div><div style="text-align:right;"><div style="font-size:9px;font-weight:700;color:var(--text);">TAX INVOICE</div><div style="font-size:8px;color:var(--sub);">ZPY-8821</div></div></div>
+      <hr style="border:none;border-top:1px solid var(--border);margin:8px 0;">
+      <div style="font-size:9px;color:var(--sub);margin-bottom:8px;">Bill to: Rahul Mehta · +91 9876•••210</div>
+      <div style="display:flex;justify-content:space-between;font-size:8px;font-weight:800;color:var(--sub);margin-bottom:6px;"><span>ITEM</span><span>QTY · PRICE · GST</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span>Amul Butter</span><span>1 · ₹280 · 12%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span>Lay's Classic</span><span>2 · ₹90 · 12%</span></div>
+      <div style="display:flex;justify-content:space-between;font-size:9px;margin-bottom:4px;"><span>Tata Tea Gold</span><span>1 · ₹195 · 5%</span></div>
+      <hr style="border:none;border-top:1px dashed var(--border);margin:8px 0;">
+      <div style="display:flex;justify-content:space-between;font-size:10px;font-weight:900;"><span>Total (incl. GST)</span><span style="color:var(--blue);">₹557.20</span></div>
+    </div>
+    <div style="display:flex;gap:7px;">
+      <button class="btn bV" style="font-size:10px;padding:9px;">💬 Share via WhatsApp</button>
+      <button class="btn bG" style="font-size:10px;padding:9px;">📥 Download PDF</button>
+    </div>
+  </div>
+</div></div><div class="lbl">A-5 Invoice View</div></div>
+
+<!-- A6  Refund Request -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Request Refund</span></div>
+  <div class="scrl" style="flex:1;padding:12px;">
+    <div style="background:var(--bg);border-radius:14px;padding:12px;margin-bottom:12px;display:flex;gap:10px;align-items:center;"><span style="font-size:28px;">🧴</span><div><div style="font-size:11px;font-weight:700;color:var(--text);">Dove Shampoo 200ml</div><div style="font-size:9px;color:var(--sub);">Order ZPY-6021 · ₹320</div></div></div>
+    <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;">REASON FOR RETURN</div>
+    <div style="display:flex;flex-direction:column;gap:6px;margin-bottom:12px;">
+      <div style="background:#fff;border:2px solid var(--blue);border-radius:11px;padding:10px 12px;display:flex;gap:8px;align-items:center;"><div style="width:16px;height:16px;border-radius:50%;background:var(--blue);display:flex;align-items:center;justify-content:center;"><span style="font-size:9px;color:#fff;">✓</span></div><span style="font-size:11px;font-weight:700;color:var(--text);">Damaged / Expired product</span></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:11px;padding:10px 12px;display:flex;gap:8px;align-items:center;"><div style="width:16px;height:16px;border-radius:50%;background:var(--border);"></div><span style="font-size:11px;color:var(--text);">Wrong item received</span></div>
+      <div style="background:#fff;border:1px solid var(--border);border-radius:11px;padding:10px 12px;display:flex;gap:8px;align-items:center;"><div style="width:16px;height:16px;border-radius:50%;background:var(--border);"></div><span style="font-size:11px;color:var(--text);">Not as described</span></div>
+    </div>
+    <div style="font-size:10px;font-weight:700;color:var(--sub);margin-bottom:5px;">ADDITIONAL NOTES</div>
+    <div style="background:#fff;border:1.5px solid var(--border);border-radius:12px;padding:10px;font-size:11px;color:var(--muted);height:70px;margin-bottom:14px;">Product seal was broken on purchase…</div>
+    <button class="btn bR">Submit Return Request</button>
+  </div>
+</div></div><div class="lbl">A-6 Refund Request</div></div>
+
+<!-- A7  Refund Submitted -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;align-items:center;justify-content:center;gap:10px;padding:20px;text-align:center;background:linear-gradient(180deg,#FFF8F0,#fff);">
+  <div style="width:72px;height:72px;border-radius:50%;background:linear-gradient(135deg,var(--orange),#D97B0A);display:flex;align-items:center;justify-content:center;box-shadow:0 8px 22px rgba(247,148,29,.3);animation:pop .5s ease;"><span style="font-size:30px;color:#fff;">✓</span></div>
+  <div class="chip cO">Return Submitted</div>
+  <div style="font-size:16px;font-weight:900;color:var(--text);">Return Request Sent!</div>
+  <div style="font-size:10px;color:var(--sub);line-height:1.6;">Your return request for Dove Shampoo has been submitted. You'll be notified within 24 hours.</div>
+  <div style="background:var(--bg);border-radius:14px;padding:12px;width:100%;text-align:left;">
+    <div style="display:flex;justify-content:space-between;margin-bottom:5px;"><span style="font-size:9px;color:var(--sub);">Return ID</span><span style="font-size:9px;font-weight:700;color:var(--orange);font-family:monospace;">RET-0241</span></div>
+    <div style="display:flex;justify-content:space-between;"><span style="font-size:9px;color:var(--sub);">Expected Refund</span><span style="font-size:9px;font-weight:700;color:var(--green);">₹320 in 2–3 days</span></div>
+  </div>
+  <button class="btn bO">Track Return Status</button>
+  <button class="btn bG" style="font-size:11px;">Back to Orders</button>
+</div></div><div class="lbl">A-7 Refund Submitted</div></div>
+
+<!-- A8  Refund Tracking -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Refund Tracking</span></div>
+  <div class="scrl" style="flex:1;padding:12px;">
+    <div style="background:linear-gradient(135deg,var(--orange-lt),#FFE8D0);border-radius:14px;padding:12px;margin-bottom:12px;display:flex;gap:10px;align-items:center;"><span style="font-size:28px;">🧴</span><div><div style="font-size:11px;font-weight:700;color:var(--text);">Dove Shampoo 200ml</div><div style="font-size:9px;color:var(--sub);">Refund: ₹320</div></div><span class="chip cO">Processing</span></div>
+    <!-- timeline -->
+    <div style="position:relative;padding-left:24px;display:flex;flex-direction:column;gap:0;">
+      <div style="position:absolute;left:8px;top:0;bottom:0;width:2px;background:var(--border);border-radius:1px;"></div>
+      <div style="display:flex;gap:10px;align-items:flex-start;position:relative;margin-bottom:14px;">
+        <div style="width:16px;height:16px;border-radius:50%;background:var(--green);position:absolute;left:-20px;top:2px;display:flex;align-items:center;justify-content:center;"><span style="font-size:9px;color:#fff;">✓</span></div>
+        <div><div style="font-size:10px;font-weight:800;color:var(--text);">Return Request Submitted</div><div style="font-size:9px;color:var(--sub);">Mar 3, 3:10 PM</div></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;position:relative;margin-bottom:14px;">
+        <div style="width:16px;height:16px;border-radius:50%;background:var(--green);position:absolute;left:-20px;top:2px;display:flex;align-items:center;justify-content:center;"><span style="font-size:9px;color:#fff;">✓</span></div>
+        <div><div style="font-size:10px;font-weight:800;color:var(--text);">Return Approved</div><div style="font-size:9px;color:var(--sub);">Mar 4, 10:22 AM</div></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;position:relative;margin-bottom:14px;">
+        <div style="width:16px;height:16px;border-radius:50%;background:var(--yellow);position:absolute;left:-20px;top:2px;animation:blink 1s infinite;display:flex;align-items:center;justify-content:center;"><span style="font-size:9px;color:#fff;">⏳</span></div>
+        <div><div style="font-size:10px;font-weight:800;color:var(--orange);">Refund Processing</div><div style="font-size:9px;color:var(--sub);">Mar 5 – Expected today</div></div>
+      </div>
+      <div style="display:flex;gap:10px;align-items:flex-start;position:relative;">
+        <div style="width:16px;height:16px;border-radius:50%;background:var(--border);position:absolute;left:-20px;top:2px;"></div>
+        <div><div style="font-size:10px;font-weight:800;color:var(--muted);">Refund Credited</div><div style="font-size:9px;color:var(--muted);">Pending</div></div>
+      </div>
+    </div>
+    <div style="background:#E6FFF4;border-radius:12px;padding:10px;margin-top:10px;display:flex;gap:8px;"><span>💬</span><span style="font-size:9px;color:var(--green);font-weight:600;">WhatsApp update will be sent when refund is credited</span></div>
+  </div>
+</div></div><div class="lbl">A-8 Refund Tracking</div></div>
+
+<!-- A9  Loyalty & Rewards -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb" style="background:var(--orange);"><span class="t" style="color:#fff;">9:41</span><span class="i" style="color:rgba(255,255,255,.5);">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div style="background:linear-gradient(135deg,var(--orange),#D97B0A);padding:18px;flex-shrink:0;">
+    <div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:10px;"><div><div style="font-size:38px;font-weight:900;color:#fff;line-height:1;">392</div><div style="font-size:10px;color:rgba(255,255,255,.8);">Zippy Points · Worth ₹39.20</div></div><div style="background:rgba(255,255,255,.2);border-radius:10px;padding:5px 10px;"><span style="font-size:10px;font-weight:800;color:#fff;">Gold Tier 🥇</span></div></div>
+    <div style="height:6px;background:rgba(255,255,255,.25);border-radius:3px;overflow:hidden;"><div style="height:100%;width:65%;background:#fff;border-radius:3px;"></div></div>
+    <div style="display:flex;justify-content:space-between;margin-top:4px;"><span style="font-size:8px;color:rgba(255,255,255,.7);">392 pts</span><span style="font-size:8px;color:rgba(255,255,255,.7);">600 for Platinum</span></div>
+  </div>
+  <div class="scrl" style="flex:1;padding:10px 12px;">
+    <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:8px;">Redeem Rewards 🎁</div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:7px;margin-bottom:12px;">
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:10px;text-align:center;"><div style="font-size:28px;margin-bottom:4px;">☕</div><div style="font-size:9px;font-weight:700;color:var(--text);">Free Coffee</div><div style="font-size:10px;font-weight:800;color:var(--orange);">200 pts</div><button style="width:100%;background:var(--orange-lt);border:none;border-radius:7px;padding:5px;font-size:9px;font-weight:700;color:var(--orange);cursor:pointer;margin-top:5px;font-family:var(--ff);">Redeem</button></div>
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:10px;text-align:center;"><div style="font-size:28px;margin-bottom:4px;">🎟️</div><div style="font-size:9px;font-weight:700;color:var(--text);">₹50 Off</div><div style="font-size:10px;font-weight:800;color:var(--orange);">300 pts</div><button style="width:100%;background:var(--orange-lt);border:none;border-radius:7px;padding:5px;font-size:9px;font-weight:700;color:var(--orange);cursor:pointer;margin-top:5px;font-family:var(--ff);">Redeem</button></div>
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:10px;text-align:center;"><div style="font-size:28px;margin-bottom:4px;">🚚</div><div style="font-size:9px;font-weight:700;color:var(--text);">Free Delivery ×5</div><div style="font-size:10px;font-weight:800;color:var(--orange);">150 pts</div><button style="width:100%;background:var(--orange-lt);border:none;border-radius:7px;padding:5px;font-size:9px;font-weight:700;color:var(--orange);cursor:pointer;margin-top:5px;font-family:var(--ff);">Redeem</button></div>
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:10px;text-align:center;"><div style="font-size:28px;margin-bottom:4px;">🥛</div><div style="font-size:9px;font-weight:700;color:var(--text);">Free Amul Milk</div><div style="font-size:10px;font-weight:800;color:var(--orange);">100 pts</div><button style="width:100%;background:var(--orange-lt);border:none;border-radius:7px;padding:5px;font-size:9px;font-weight:700;color:var(--orange);cursor:pointer;margin-top:5px;font-family:var(--ff);">Redeem</button></div>
+    </div>
+    <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:8px;">Points History</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div style="background:#fff;border-radius:11px;border:1px solid var(--border);padding:9px 12px;display:flex;gap:8px;align-items:center;"><span style="font-size:20px;">🛒</span><div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);">Order ZPY-8821</div><div style="font-size:8px;color:var(--sub);">Today</div></div><span style="font-size:12px;font-weight:800;color:var(--green);">+52</span></div>
+      <div style="background:#fff;border-radius:11px;border:1px solid var(--border);padding:9px 12px;display:flex;gap:8px;align-items:center;"><span style="font-size:20px;">🎁</span><div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);">₹30 Coupon Redeemed</div><div style="font-size:8px;color:var(--sub);">Mar 2</div></div><span style="font-size:12px;font-weight:800;color:var(--red);">−300</span></div>
+    </div>
+  </div>
+</div></div><div class="lbl">A-9 Loyalty &amp; Rewards</div></div>
+
+<!-- A10  Notifications -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Notifications</span><span style="font-size:10px;font-weight:700;color:var(--blue);margin-left:auto;">Mark All Read</span></div>
+  <div class="scrl" style="flex:1;padding:10px 12px;">
+    <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;">TODAY</div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);padding:10px 12px;display:flex;gap:9px;margin-bottom:7px;border-left:3px solid var(--blue);">
+      <div style="width:34px;height:34px;border-radius:10px;background:#E6FFF4;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">✅</div>
+      <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);line-height:1.4;">Order ZPY-8821 completed — exit validated!</div><div style="font-size:8px;color:var(--sub);margin-top:2px;">9:43 AM</div></div>
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--blue);flex-shrink:0;margin-top:3px;"></div>
+    </div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);padding:10px 12px;display:flex;gap:9px;margin-bottom:7px;border-left:3px solid var(--orange);">
+      <div style="width:34px;height:34px;border-radius:10px;background:var(--orange-lt);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">⭐</div>
+      <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);line-height:1.4;">+52 Zippy Points! Now 392 total</div><div style="font-size:8px;color:var(--sub);margin-top:2px;">9:43 AM</div></div>
+      <div style="width:7px;height:7px;border-radius:50%;background:var(--orange);flex-shrink:0;margin-top:3px;"></div>
+    </div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);padding:10px 12px;display:flex;gap:9px;margin-bottom:12px;">
+      <div style="width:34px;height:34px;border-radius:10px;background:var(--blue-lt);display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">🎟️</div>
+      <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);line-height:1.4;">20% off Amul products — today only!</div><div style="font-size:8px;color:var(--sub);margin-top:2px;">8:00 AM</div></div>
+    </div>
+    <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:7px;">YESTERDAY</div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);padding:10px 12px;display:flex;gap:9px;margin-bottom:7px;">
+      <div style="width:34px;height:34px;border-radius:10px;background:#F0F4FF;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">💬</div>
+      <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);line-height:1.4;">WhatsApp receipt delivered for ZPY-7134</div><div style="font-size:8px;color:var(--sub);margin-top:2px;">6:24 PM</div></div>
+    </div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);padding:10px 12px;display:flex;gap:9px;">
+      <div style="width:34px;height:34px;border-radius:10px;background:#FFF0F0;display:flex;align-items:center;justify-content:center;font-size:17px;flex-shrink:0;">🔄</div>
+      <div style="flex:1;"><div style="font-size:10px;font-weight:700;color:var(--text);line-height:1.4;">Return approved for Dove Shampoo</div><div style="font-size:8px;color:var(--sub);margin-top:2px;">3:10 PM</div></div>
+    </div>
+  </div>
+</div></div><div class="lbl">A-10 Notifications</div></div>
+
+<!-- A11  Settings -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Settings</span></div>
+  <div class="scrl" style="flex:1;padding:10px 12px;">
+    <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Preferences</div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);overflow:hidden;margin-bottom:10px;">
+      <div class="mr"><div class="mi" style="background:var(--blue-lt);">📍</div><div style="flex:1;"><div class="mt">Location</div><div class="ms">Auto store detect</div></div><div style="width:34px;height:18px;border-radius:9px;background:var(--blue);position:relative;"><div style="position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;"></div></div></div>
+      <div class="mr"><div class="mi" style="background:#E6FFF4;">🔔</div><div style="flex:1;"><div class="mt">Notifications</div><div class="ms">Offers, gates, orders</div></div><div style="width:34px;height:18px;border-radius:9px;background:var(--blue);position:relative;"><div style="position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;"></div></div></div>
+      <div class="mr"><div class="mi" style="background:#E6FFF4;">💬</div><div style="flex:1;"><div class="mt">WhatsApp Receipts</div><div class="ms">Auto-send after checkout</div></div><div style="width:34px;height:18px;border-radius:9px;background:var(--blue);position:relative;"><div style="position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;"></div></div></div>
+      <div class="mr" style="border:none;"><div class="mi" style="background:var(--orange-lt);">🌙</div><div style="flex:1;"><div class="mt">Dark Mode</div><div class="ms">System default</div></div><div style="width:34px;height:18px;border-radius:9px;background:var(--border);position:relative;"><div style="position:absolute;left:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;"></div></div></div>
+    </div>
+    <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Security</div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);overflow:hidden;margin-bottom:10px;">
+      <div class="mr"><div class="mi" style="background:#F0F4FF;">👆</div><div style="flex:1;"><div class="mt">Biometric Lock</div></div><div style="width:34px;height:18px;border-radius:9px;background:var(--blue);position:relative;"><div style="position:absolute;right:2px;top:2px;width:14px;height:14px;border-radius:50%;background:#fff;"></div></div></div>
+      <div class="mr" style="border:none;"><div class="mi" style="background:#FFF0F0;">🔐</div><div style="flex:1;"><div class="mt">Payment PIN</div><div class="ms">Required above ₹2000</div></div><span class="ma">›</span></div>
+    </div>
+    <div style="font-size:9px;font-weight:800;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:6px;">Data &amp; Privacy</div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);overflow:hidden;">
+      <div class="mr"><div class="mi" style="background:var(--bg);">🛡️</div><div style="flex:1;"><div class="mt">Manage My Data</div></div><span class="ma">›</span></div>
+      <div class="mr" style="border:none;"><div class="mi" style="background:#FFF0F0;">🗑️</div><div style="flex:1;"><div class="mt" style="color:var(--red);">Delete Account</div></div><span class="ma" style="color:var(--red);">›</span></div>
+    </div>
+  </div>
+</div></div><div class="lbl">A-11 Settings</div></div>
+
+<!-- A12  Help & Chat Support -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Help &amp; Support</span></div>
+  <div class="scrl" style="flex:1;padding:11px 12px;">
+    <div style="background:var(--bg);border-radius:13px;overflow:hidden;margin-bottom:12px;border:1px solid var(--border);">
+      <div class="mr"><div class="mi" style="background:var(--blue-lt);">💬</div><div style="flex:1;"><div class="mt">Live Chat Support</div><div class="ms" style="color:var(--green);">● Online · Avg reply 2 min</div></div><span class="ma">›</span></div>
+      <div class="mr"><div class="mi" style="background:var(--orange-lt);">📞</div><div style="flex:1;"><div class="mt">Call Support</div><div class="ms">Mon–Sat 9AM–9PM</div></div><span class="ma">›</span></div>
+      <div class="mr" style="border:none;"><div class="mi" style="background:#F0FFF8;">🎫</div><div style="flex:1;"><div class="mt">Ticket History</div><div class="ms">2 open tickets</div></div><span class="ma">›</span></div>
+    </div>
+    <!-- FAQ -->
+    <div style="font-size:11px;font-weight:800;color:var(--text);margin-bottom:8px;">Frequently Asked</div>
+    <div style="display:flex;flex-direction:column;gap:6px;">
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:11px 12px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;font-weight:700;color:var(--text);">How does Scan &amp; Go work?</span><span style="font-size:12px;color:var(--muted);">›</span></div>
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:11px 12px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;font-weight:700;color:var(--text);">My exit QR isn't working</span><span style="font-size:12px;color:var(--muted);">›</span></div>
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:11px 12px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;font-weight:700;color:var(--text);">Refund not received</span><span style="font-size:12px;color:var(--muted);">›</span></div>
+      <div style="background:#fff;border-radius:12px;border:1px solid var(--border);padding:11px 12px;display:flex;justify-content:space-between;align-items:center;"><span style="font-size:10px;font-weight:700;color:var(--text);">How to redeem Zippy Points?</span><span style="font-size:12px;color:var(--muted);">›</span></div>
+    </div>
+  </div>
+</div></div><div class="lbl">A-12 Help &amp; Support</div></div>
+
+<!-- A13  Logout Confirmation -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="position:relative;display:flex;flex-direction:column;">
+  <!-- blurred bg -->
+  <div style="flex:1;padding:12px;opacity:.3;filter:blur(1px);">
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);padding:12px;margin-bottom:8px;height:80px;"></div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);padding:12px;height:60px;"></div>
+  </div>
+  <!-- modal -->
+  <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:22px 22px 0 0;padding:20px;box-shadow:0 -8px 40px rgba(0,0,0,.18);">
+    <div style="width:32px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 16px;"></div>
+    <div style="font-size:15px;font-weight:900;color:var(--text);margin-bottom:5px;">Log Out?</div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:14px;line-height:1.6;">You'll need to verify your mobile number again to log back in.</div>
+    <button class="btn bR" style="margin-bottom:8px;">Yes, Log Out</button>
+    <button class="btn bG">Cancel</button>
+  </div>
+</div></div><div class="lbl">A-13 Logout Confirm</div></div>
+
+<!-- A14  App Rating Modal -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="position:relative;background:#fff;display:flex;flex-direction:column;">
+  <div style="flex:1;opacity:.3;padding:12px;">
+    <div style="background:var(--bg);border-radius:13px;height:100px;margin-bottom:8px;"></div>
+    <div style="background:var(--bg);border-radius:13px;height:60px;"></div>
+  </div>
+  <!-- rating sheet -->
+  <div style="position:absolute;bottom:0;left:0;right:0;background:#fff;border-radius:22px 22px 0 0;padding:20px;box-shadow:0 -8px 40px rgba(0,0,0,.15);text-align:center;">
+    <div style="width:32px;height:4px;border-radius:2px;background:var(--border);margin:0 auto 14px;"></div>
+    <div style="font-size:28px;margin-bottom:6px;">⭐</div>
+    <div style="font-size:15px;font-weight:900;color:var(--text);margin-bottom:5px;">Enjoying Zippyra?</div>
+    <div style="font-size:10px;color:var(--sub);margin-bottom:14px;">Rate us on the Play Store — it takes 10 seconds!</div>
+    <!-- star row -->
+    <div style="display:flex;justify-content:center;gap:6px;margin-bottom:16px;font-size:28px;">
+      <span style="cursor:pointer;">⭐</span><span style="cursor:pointer;">⭐</span><span style="cursor:pointer;">⭐</span><span style="cursor:pointer;">⭐</span><span style="cursor:pointer;opacity:.4;">⭐</span>
+    </div>
+    <button class="btn bO" style="margin-bottom:8px;">Rate on Play Store ⭐</button>
+    <button class="btn bG" style="font-size:11px;">Not Now</button>
+  </div>
+</div></div><div class="lbl">A-14 App Rating</div></div>
+
+<!-- A15  PII Management -->
+<div class="f">
+<div class="ph"><div class="nch"></div><div class="sb"><span class="t">9:41</span><span class="i">●●●</span></div>
+<div class="s-" style="display:flex;flex-direction:column;">
+  <div class="hdr"><div class="bk">←</div><span class="pg">Manage My Data 🛡️</span></div>
+  <div class="scrl" style="flex:1;padding:11px 12px;">
+    <div style="background:var(--blue-lt);border-radius:12px;padding:11px;margin-bottom:12px;display:flex;gap:8px;"><span>🔒</span><span style="font-size:9px;color:var(--blue);font-weight:600;line-height:1.6;">Your data is stored encrypted in India-only servers. Zippyra never sells personal data to advertisers.</span></div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);overflow:hidden;margin-bottom:10px;">
+      <div class="mr"><div class="mi" style="background:var(--blue-lt);">📋</div><div style="flex:1;"><div class="mt">Download My Data</div><div class="ms">GDPR / DPDPA compliant</div></div><span class="ma">›</span></div>
+      <div class="mr"><div class="mi" style="background:var(--orange-lt);">✉️</div><div style="flex:1;"><div class="mt">Communication Preferences</div><div class="ms">Email, SMS, WhatsApp</div></div><span class="ma">›</span></div>
+      <div class="mr" style="border:none;"><div class="mi" style="background:#FFF0F0;">🗑️</div><div style="flex:1;"><div class="mt" style="color:var(--red);">Delete All My Data</div><div class="ms" style="color:var(--red);">Permanent action</div></div><span class="ma" style="color:var(--red);">›</span></div>
+    </div>
+    <div style="background:#fff;border-radius:13px;border:1px solid var(--border);overflow:hidden;">
+      <div class="mr"><div class="mi" style="background:var(--bg);">👁️</div><div style="flex:1;"><div class="mt">Data We Collect</div></div><span class="ma">›</span></div>
+      <div class="mr" style="border:none;"><div class="mi" style="background:var(--bg);">🔗</div><div style="flex:1;"><div class="mt">Third-Party Sharing</div></div><span class="ma">›</span></div>
+    </div>
+  </div>
+</div></div><div class="lbl">A-15 PII Management</div></div>
+
+</div><!-- end account grid -->
+
+<!-- footer -->
+<div style="margin:44px 0 20px;color:#333;font-size:11px;text-align:center;font-weight:600;line-height:2;">
+  <span style="color:rgba(255,255,255,.3);">Zippyra Complete UI Kit · </span>
+  <a href="part1.html" style="color:var(--blue-lt);font-weight:800;text-decoration:none;">← Part 1: Init–Store</a>
+  <span style="margin:0 10px;color:#333;">·</span>
+  <a href="part2.html" style="color:var(--blue-lt);font-weight:800;text-decoration:none;">← Part 2: Home–Cart</a>
+  <span style="margin:0 10px;color:#333;">·</span>
+  <span style="color:var(--orange);font-weight:800;">Part 3: Payment · Exit · Account ✓</span>
+</div>
+</body>
+</html>
